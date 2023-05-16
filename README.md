@@ -1,2 +1,5 @@
 # japm
-Package and project manager for Java
+
+Package manager, project generator, and compiler for Java.
+
+maven be shit so like i made this fr
