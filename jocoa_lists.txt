@@ -1,5 +1,13 @@
-[files]
-src/main/*.java
+files {
 
-[dependencies]
-lib/*.jar
+    src/main/*.java
+    src/main/window/*.java
+    src/main/window/render/*.java
+
+}
+
+dependencies {
+
+    lib/*.jar
+
+}
