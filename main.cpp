@@ -28,11 +28,9 @@ int main(int argc, char const *argv[])
 {
 
     std::string path = getExePath();
-
     std::cout << path << std::endl;
 
     std::string cwd = getCWD();
-
     std::cout << cwd << std::endl;
 
     return 0;

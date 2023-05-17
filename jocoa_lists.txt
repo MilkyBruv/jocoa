@@ -1,1 +1,5 @@
+[files]
 src/main/*.java
+
+[dependencies]
+lib/*.jar
