@@ -7,6 +7,7 @@
 #include <cctype>
 #include <algorithm>
 #include <functional>
+#include <locale>
 
 using std::string;
 using std::cout;
@@ -100,6 +101,16 @@ vector<string> split(string str, char delimiter)
 
 }
 
+string strip(const string &str)
+{
+
+    string result;
+
+    result.reserve(str.length());
+    std::remove_copy_if(str.begin(), str.end(), std::back_inserter(result), std::not1(std::ptr_fun()));
+
+}
+
 int main(int argc, char const *argv[])
 {
 
@@ -114,11 +125,18 @@ int main(int argc, char const *argv[])
     // Get lines from file
 
     ifstream in_file;
-    in_file.open(cwd + "/jocoa_lists.txt", ios::in);
+    in_file.open(cwd + "/jocoa_lists.txt");
     vector<string> lines;
     string l;
 
-    while (std::getline(in_file, l))
+    if (!in_file)
+    {
+
+        //
+
+    }
+
+    while (in_file >> l)
     {
 
         lines.push_back(l);
@@ -136,12 +154,21 @@ int main(int argc, char const *argv[])
     string st_line;
     string sp_line;
 
+    cout << lines.size() << endl;
+
+    // for (size_t i = 0; i < lines.size(); i++)
+    // {
+    //     cout << lines.at(i) << endl;
+    // }
+    
+    
+
     // Strip line of trailing / pre whitespace
 
-    for (string &line : lines)
+    for (size_t i = 0; i < lines.size(); i++)
     {
 
-        cout << line + "\n";
+        string line = lines.at(i);
         
         auto st_line_start_strip = line.begin();
         auto st_line_end_strip = line.rbegin();
