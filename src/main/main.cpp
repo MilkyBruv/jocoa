@@ -17,10 +17,7 @@ using json = nlohmann::json;
 string getCWD()
 {
 
-    std::filesystem::path path = std::filesystem::current_path();
-    string path_str{path.u8string()};
-
-    return path_str;
+    return std::filesystem::current_path().u8string();
 
 }
 
@@ -63,7 +60,8 @@ int main(int argc, char const *argv[])
     vector<string> dependencies;
 
     string final_javac = "javac -d ";
-    string final_java = "java ";
+    string final_java = "java -cp ";
+    string final_cmd = "cd ";
 
     string d_args = "classfiles";
     string cp_args = "-cp \".";
@@ -130,6 +128,8 @@ int main(int argc, char const *argv[])
 
     #pragma endregion 
 
+    // Create javac and java commands
+
     for (const auto &dependency : dependencies)
     {
 
@@ -150,7 +150,11 @@ int main(int argc, char const *argv[])
 
     final_javac += d_args + " " + cp_args + " " + sourcepath_args;
 
-    cout << final_javac + "\n";
+    final_java += d_args + " main/Main";
+
+    final_cmd += "\"" + getCWD() + "\" && " + final_javac + " && " + final_java;
+
+    cout << final_cmd + "\n";
 
     return 0;
 }
