@@ -3,6 +3,8 @@
 #include <vector>
 #include <string>
 #include <nlohmann/json.hpp>
+#include <unistd.h>
+#include <stdio.h>
 
 
 using std::string;
@@ -14,20 +16,12 @@ using std::cerr;
 using json = nlohmann::json;
 
 
-string getCWD()
-{
-
-    return std::filesystem::current_path().u8string();
-
-}
-
-
 int main(int argc, char const *argv[])
 {
 
     // Read json file
 
-    std::ifstream in_file(getCWD() + "/jocoa.json");
+    std::ifstream in_file(std::filesystem::current_path().u8string() + "/jocoa.json");
 
     if (!in_file) 
     {
@@ -61,13 +55,12 @@ int main(int argc, char const *argv[])
 
     string final_javac = "javac -d ";
     string final_java = "java -cp ";
-    string final_cmd = "cd ";
+    string final_cmd = "";
 
     string d_args = "classfiles";
-    string cp_args = "-cp \".";
+    string cp_args = "-cp .";
     string sourcepath_args = "-sourcepath ";
-
-    #pragma region try_catch_arrs_vars
+    string files_args = "";
 
     try
     {
@@ -126,8 +119,6 @@ int main(int argc, char const *argv[])
 
     }
 
-    #pragma endregion 
-
     // Create javac and java commands
 
     for (const auto &dependency : dependencies)
@@ -136,8 +127,6 @@ int main(int argc, char const *argv[])
         cp_args += ";" + dependency;
 
     }
-
-    cp_args += "\"";
 
     for (const auto &file : files)
     {
@@ -148,13 +137,26 @@ int main(int argc, char const *argv[])
 
     sourcepath_args.at(sourcepath_args.length() - 1) = 0;
 
-    final_javac += d_args + " " + cp_args + " " + sourcepath_args;
+    for (const auto &file_arg : files)
+    {
+
+        files_args += file_arg + " ";
+
+    }
+
+    files_args.at(files_args.length() - 1) = 0;
+
+    final_javac += d_args + " " + cp_args + " " + sourcepath_args + " " + files_args;
 
     final_java += d_args + " main/Main";
 
-    final_cmd += "\"" + getCWD() + "\" && " + final_javac + " && " + final_java;
+    final_cmd += final_javac + " && " + final_java;
 
     cout << final_cmd + "\n";
+
+    chdir(std::filesystem::current_path().u8string());
+
+    system(final_cmd.c_str());
 
     return 0;
 }
