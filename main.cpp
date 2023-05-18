@@ -2,12 +2,9 @@
 #include <Windows.h>
 #include <string>
 #include <filesystem>
-#include <sstream>
 #include <fstream>
-#include <cctype>
-#include <algorithm>
-#include <functional>
-#include <locale>
+#include <boost/algorithm/string.hpp>
+
 
 using std::string;
 using std::cout;
@@ -15,6 +12,7 @@ using std::endl;
 using std::ifstream;
 using std::ios;
 using std::vector;
+
 
 string getCWD()
 {
@@ -37,6 +35,7 @@ string getExePath()
 
 }
 
+
 string replace(string str, char c1, char c2)
 {
 
@@ -51,13 +50,6 @@ string replace(string str, char c1, char c2)
             str[i] = c2;
 
         }
- 
-        else if (str[i] == c2)
-        {
-        
-            str[i] = c1;
-
-        }
 
     }
 
@@ -65,37 +57,12 @@ string replace(string str, char c1, char c2)
 
 }
 
-vector<string> split(string str, char delimiter)
+vector<string> split(const string &str, const string &delimiter)
 {
 
     vector<string> splits;
 
-    char arr[100];
-    
-    std::cin.getline(arr, 100);
-    int i = 0;
-    
-    // Temporary string used to split the string.
-    string s; 
-    while (arr[i] != '\0')
-    {
-    
-        if (arr[i] != delimiter)
-        {
-        
-            s += arr[i]; 
-
-        } else
-        {
-        
-            splits.push_back(s);
-            s.clear();
-
-        }
-
-        i++;
-
-    }
+    boost::split(splits, str, boost::is_any_of(delimiter));
 
     return splits;
 
@@ -104,12 +71,56 @@ vector<string> split(string str, char delimiter)
 string strip(const string &str)
 {
 
-    string result;
+    string result = str;
 
-    result.reserve(str.length());
-    std::remove_copy_if(str.begin(), str.end(), std::back_inserter(result), std::not1(std::ptr_fun()));
+    boost::algorithm::trim(result);
+
+    return result;
 
 }
+
+bool contains(const string &str, char c)
+{
+
+    int l = str.length();
+ 
+    for (int i = 0; i < l; i++)
+    {
+        
+        if (str[i] == c)
+        {
+
+            return true;
+
+        }
+
+    }
+
+    return false;
+
+}
+
+bool contains(const string &str1, const string &str2)
+{
+
+    if (str1.find(str2) != std::string::npos)
+    {
+
+        return true;
+    
+    }
+
+    return false;
+
+}
+
+bool compare(const string &str1, const string &str2)
+{
+
+    return boost::algorithm::equals(str1, str2);
+
+}
+
 
 int main(int argc, char const *argv[])
 {
@@ -136,7 +147,7 @@ int main(int argc, char const *argv[])
 
     }
 
-    while (in_file >> l)
+    while (std::getline(in_file, l))
     {
 
         lines.push_back(l);
@@ -154,95 +165,86 @@ int main(int argc, char const *argv[])
     string st_line;
     string sp_line;
 
-    cout << lines.size() << endl;
-
-    // for (size_t i = 0; i < lines.size(); i++)
-    // {
-    //     cout << lines.at(i) << endl;
-    // }
-    
-    
-
     // Strip line of trailing / pre whitespace
+
+    string line;
 
     for (size_t i = 0; i < lines.size(); i++)
     {
 
-        string line = lines.at(i);
-        
-        auto st_line_start_strip = line.begin();
-        auto st_line_end_strip = line.rbegin();
+        line = lines.at(i);
 
-        while (std::isspace(*st_line_start_strip))
-        {
-
-            ++st_line_start_strip;
-
-        }
-
-        while (std::isspace(*st_line_end_strip))
-        {
-
-            ++st_line_end_strip;
-
-        }
-
-        st_line = string(st_line_start_strip, st_line_end_strip.base());
+        st_line = strip(line);
 
         // Check for empty lines
 
-        if (st_line != "\n" && st_line != "" && st_line != "\0")
+        if (!compare(st_line, "\n") && !compare(st_line, "") && !compare(st_line, "\0"))
         {
-
-            cout << st_line << endl;
 
             // Remove all spaces
 
-            sp_line.erase(std::remove(sp_line.begin(), sp_line.end(), ' '), sp_line.end());
+            sp_line = replace(st_line, ' ', 0);
+
+            cout << sp_line << "\n";
 
             // Split line at '{' and check if line is for files or dependencies
 
-            if (split(sp_line, '{').at(0) == "files" && sp_line.at(sp_line.length() - 1) == '{')
+            if (compare(split(sp_line, "{").at(0), "files") && sp_line.at(sp_line.length() - 1) == '{')
             {
 
                 add_files = true;
                 add_libs = false;
 
-            } if (split(sp_line, '{').at(0) == "dependencies" && sp_line.at(sp_line.length() - 1) == '{')
+                cout << "FILE\n";
+
+            }
+            
+            if (compare(split(sp_line, "{").at(0), "dependencies") && sp_line.at(sp_line.length() - 1) == '{')
             {
 
                 add_files = false;
                 add_libs = true;
 
-            }
-
-            // Check if line doesn't contain anything that isn't a file path / dependency path
-
-            if (add_files && !(st_line.find("files") != string::npos) && !(st_line.find("{") == string::npos) && !(st_line.find("}") == string::npos))
-            {
-
-                files.push_back(st_line);
-
-            } if (add_libs && !(st_line.find("dependencies") == string::npos) && !(st_line.find("{") == string::npos) && !(st_line.find("}") == string::npos))
-            {
-
-                libs.push_back(st_line);
+                cout << "DEP\n";
 
             }
+            
+            if (!contains(st_line, '{') && !contains(st_line, '}'))
+            {
+            
+                if (add_files)
+                {
 
-            if (add_files && st_line.find("}") != string::npos)
+                    files.push_back(st_line);
+
+                }
+
+                if (add_libs)
+                {
+
+                    libs.push_back(st_line);
+
+                }
+
+            }
+            
+            if (add_files && contains(st_line, '}'))
             {
 
                 add_files = false;
                 add_libs = false;
 
-            } if (add_libs && st_line.find("}") != string::npos)
+            }
+            
+            if (add_libs && contains(st_line, '}'))
             {
 
                 add_files = false;
                 add_libs = false;
 
             }
+
+            cout << "END\n";
 
         }
 
@@ -251,14 +253,16 @@ int main(int argc, char const *argv[])
     for (string &file1 : files)
     {
         
-        cout << file1 << endl;
+        cout << file1 + "\n";
 
     }
+
+    cout << "\n";
 
     for (string &lib1 : libs)
     {
         
-        cout << lib1 << endl;
+        cout << lib1 + "\n";
 
     }
 

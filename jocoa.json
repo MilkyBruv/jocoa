@@ -1,0 +1,20 @@
+{
+
+    "files": [
+
+        "bob",
+        "daniel"
+
+    ],
+
+    "dependencies": [
+
+        "dep1",
+        "dep2",
+        "dep2"
+
+    ],
+
+    "classfiles": "amongus"
+
+}
