@@ -1,6 +1,6 @@
-# jocoa
+# Jocoa
 
-A simple compiler and packager for Java.
+A simple compiler and packager for **Java 8**.
 
 ## Download Instruction
 
