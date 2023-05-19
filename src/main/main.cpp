@@ -149,12 +149,11 @@ int main(int argc, char const *argv[])
 
     final_java += d_args + " main/Main";
 
-    final_cmd += final_javac + " && " + final_java;
-
     cout << final_cmd + "\n";
 
     system("cmd /c");
-    system(final_cmd.c_str());
+    system(final_javac.c_str());
+    system(final_java.c_str());
 
     return 0;
 }
