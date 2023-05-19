@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 #include <nlohmann/json.hpp>
-#include <unistd.h>
 #include <stdio.h>
 
 
@@ -154,8 +153,7 @@ int main(int argc, char const *argv[])
 
     cout << final_cmd + "\n";
 
-    chdir(std::filesystem::current_path().u8string());
-
+    system("cmd /c");
     system(final_cmd.c_str());
 
     return 0;
