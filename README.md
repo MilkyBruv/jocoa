@@ -8,9 +8,13 @@ Head to the releases tab and download the latest .zip folder and extract it into
 
 Or
 
-Download the source code.
+Download the source code, then run these commands (replace dirs with your own).
 
-Head to `C:/path/to/jocoa/`
+```
+C:/> mkdir jocoa
+C:/> cd "C:/path/to/sourcecode/"
+C:/path/to/sourcecode/> make
+```
 
 ## Usage
 
