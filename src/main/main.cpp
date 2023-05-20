@@ -56,10 +56,12 @@ int main(int argc, char const *argv[])
     string final_java = "java -cp ";
     string final_cmd = "";
 
-    string d_args = "classfiles";
+    string d_args = "bin";
     string cp_args = "-cp .";
     string sourcepath_args = "-sourcepath ";
     string files_args = "";
+
+    #pragma region parseJson
 
     try
     {
@@ -118,6 +120,8 @@ int main(int argc, char const *argv[])
 
     }
 
+    #pragma endregion
+
     // Create javac and java commands
 
     for (const auto &dependency : dependencies)
@@ -131,25 +135,18 @@ int main(int argc, char const *argv[])
     {
 
         sourcepath_args += file + ";";
+        files_args += file + " ";
 
     }
 
     sourcepath_args.at(sourcepath_args.length() - 1) = 0;
-
-    for (const auto &file_arg : files)
-    {
-
-        files_args += file_arg + " ";
-
-    }
-
     files_args.at(files_args.length() - 1) = 0;
 
-    final_javac += d_args + " " + cp_args + " " + sourcepath_args + " " + files_args;
-
+    final_javac += d_args + " " + cp_args + " " + files_args;
     final_java += d_args + " main/Main";
 
-    cout << final_cmd + "\n";
+    cout << final_javac + "\n";
+    cout << final_java + "\n";
 
     system("cmd /c");
     system(final_javac.c_str());
