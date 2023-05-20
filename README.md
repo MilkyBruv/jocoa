@@ -1,6 +1,6 @@
 # Jocoa
 
-A simple compiler and packager for Java.
+A simple Java compiler argument generator using C++ and Json.
 
 ## Installation
 
