@@ -1,16 +1,18 @@
 # Jocoa
 
-A simple compiler and packager for **Java 8**.
+A simple compiler and packager for Java.
 
-## Download Instruction
+## Installation
 
-Head to the releases tab and download the latest .zip folder.
+Head to the releases tab and download the latest .zip folder and extract it into `C:/jocoa/`, then add `C:/jocoa/` to PATH.
 
-Extract it into `C:/jocoa/`.
+Or
 
-Add `C:/jocoa/` to PATH.
+Download the source code.
 
-## Json
+Head to `C:/path/to/jocoa/`
+
+## Usage
 
 Go to the root folder of your java project, then create a file called `jocoa.json`.
 
@@ -35,7 +37,7 @@ The json file will contain only 3 variables: `files`, `dependencies`, and `class
 
     ],
 
-    "classfiles": "classfiles"
+    "classfiles": "bin"
 
 }
 ```
@@ -45,7 +47,5 @@ The json file will contain only 3 variables: `files`, `dependencies`, and `class
 `dependancies` - List of relative path the all `.jar` libraries.
 
 `classfiles` - Name of folder `.class` files will be created in.
-
-## Usage
 
 Run `jocoa` in the base dir of your java project and your project should compile and run.
