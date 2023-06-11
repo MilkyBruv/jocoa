@@ -57,9 +57,10 @@ int main(int argc, char const *argv[])
     string final_cmd = "";
 
     string d_args = "bin";
-    string cp_args = "-cp .";
-    string sourcepath_args = "-sourcepath ";
+    string cp_args = "";
     string files_args = "";
+    string natives_args = "";
+    string D_args = "";
 
     #pragma region parseJson
 
@@ -73,6 +74,21 @@ int main(int argc, char const *argv[])
     {
 
         cerr << "Failed to access the 'classfiles' variable: " << e.what() << endl;
+
+        return 1;
+
+    }
+
+    try
+    {
+        
+        const auto &nativesJson = data["natives"];
+        natives_args = nativesJson;
+
+    } catch (const json::type_error &e)
+    {
+
+        cerr << "Failed to access the 'natives' variable: " << e.what() << endl;
 
         return 1;
 
@@ -134,16 +150,16 @@ int main(int argc, char const *argv[])
     for (const auto &file : files)
     {
 
-        sourcepath_args += file + ";";
         files_args += file + " ";
 
     }
 
-    sourcepath_args.at(sourcepath_args.length() - 1) = 0;
+    D_args = " -Djava.library.path=./" + natives_args;
+
     files_args.at(files_args.length() - 1) = 0;
 
-    final_javac += d_args + " " + cp_args + " " + files_args;
-    final_java += d_args + " main/Main";
+    final_javac += d_args + " -cp ." + cp_args + " " + files_args;
+    final_java += ".;" + d_args + cp_args + D_args + " main/Main";
 
     cout << final_javac + "\n";
     cout << final_java + "\n";
@@ -151,6 +167,9 @@ int main(int argc, char const *argv[])
     system("cmd /c");
     system(final_javac.c_str());
     system(final_java.c_str());
+
+    // javac   -d <classfiles>   -cp .;1.jar;2,jar   dir1/*.java dir2/*.java
+    // java   -cp .;<classfiles>;1.jar;2.jar   -Djava.library.path=<dll dir>   main/Main
 
     return 0;
 }
