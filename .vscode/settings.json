@@ -108,6 +108,7 @@
         "variant": "cpp",
         "xtree": "cpp",
         "*.tcc": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "version": "cpp"
     }
 }
