@@ -7,4 +7,4 @@ run:
 test:
 
 	g++ src/main/main.cpp -o build/jocoa.exe
-	.\build\jocoa.exe amongus
+	.\build\jocoa.exe
