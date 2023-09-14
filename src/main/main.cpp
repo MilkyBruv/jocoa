@@ -170,11 +170,11 @@ int main(int argc, char const *argv[]) {
         create_directory(path + "\\" + name + "\\bin");
 
         std::ofstream jocoa_json_file(path + "\\" + name + "\\jocoa.json");
-        jocoa_json_file << "{\n\n\t\"files\": [\"src/main/Main.java\"],\n\n\t\"dependencies\": [],\n\n\t\"natives\": \"lib/natives\",\n\n\t\"classfiles\": \"bin\"\n\n}";
+        jocoa_json_file << "{\n\n\t\"files\": [\n\n\t\t\"src/main/Main.java\"\n\n\t],\n\n\t\"dependencies\": [],\n\n\t\"natives\": \"lib/natives\",\n\n\t\"classfiles\": \"bin\"\n\n}";
         jocoa_json_file.close();
         
         std::ofstream main_java_file(path + "\\" + name + "\\src\\main\\Main.java");
-        main_java_file << "package main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\t//\n\n\t\t}\n\n}";
+        main_java_file << "package main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\t//\n\n\t}\n\n}";
         main_java_file.close();
 
     }
