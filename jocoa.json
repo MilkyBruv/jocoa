@@ -1,22 +1,32 @@
 {
 
-    "files": [
+    "tasks": [
 
-        "bob",
-        "daniel"
+        {
 
-    ],
+            "task": "daniel",
 
-    "dependencies": [
+            "files": [
 
-        "dep1",
-        "dep2",
-        "dep2"
+                "bob",
+                "daniel"
+        
+            ],
+        
+            "dependencies": [
+        
+                "dep1",
+                "dep2",
+                "dep2"
+        
+            ],
+        
+            "natives": "maytuh",
+        
+            "classfiles": "yeah"
 
-    ],
+        }
 
-    "natives": "maytuh",
-
-    "classfiles": "amongus"
+    ]
 
 }

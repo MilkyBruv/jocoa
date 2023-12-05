@@ -1,0 +1,43 @@
+{
+
+	"tasks": [
+
+		{
+
+			"task": "main",
+
+			"files": [
+
+				"src/main/Main.java"
+
+			],
+
+			"dependencies": [],
+
+			"natives": "lib/natives",
+
+			"classfiles": "bin"
+
+		},
+
+		{
+
+			"task": "more",
+
+			"files": [
+
+				"src/more/More.java"
+
+			],
+
+			"dependencies": [],
+
+			"natives": "lib/natives",
+
+			"classfiles": "bin"
+
+		}
+
+	]
+
+}
