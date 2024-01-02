@@ -72,7 +72,7 @@ int main(int argc, char const *argv[]) {
 
         }
 
-        vector<task_t> tasks;
+        vector<task_t> all_tasks;
         vector<string> task_names;
         task_t current_task;
 
@@ -130,7 +130,7 @@ int main(int argc, char const *argv[]) {
 
                     try {
             
-                        const auto &files_json = data["files"];
+                        const auto &files_json = data["tasks"][current_task_index]["files"];
 
                         for (const auto &file : files_json) {
 
@@ -147,7 +147,7 @@ int main(int argc, char const *argv[]) {
 
                     try {
 
-                        const auto &dependencies_json = data["dependencies"];
+                        const auto &dependencies_json = data["tasks"][current_task_index]["dependencies"];
 
                         for (const auto &dependency : dependencies_json) {
 
@@ -162,6 +162,7 @@ int main(int argc, char const *argv[]) {
 
                     }
 
+                    all_tasks.push_back(new_task);
                     current_task_index++;
 
                 } catch (const json::other_error &e) {
@@ -182,27 +183,18 @@ int main(int argc, char const *argv[]) {
 
         #pragma endregion
 
-        cout << "HERE 1" << endl;
-
         // Find specified task and create respective javac and java commands
 
         if (std::find(task_names.begin(), task_names.end(), task_arg) != task_names.end())
         {
 
-            cout << "HERE 2" << endl;
-
-            cout << tasks.size() << endl; // returns 0 idk why cuh
-
-            for (task_t task : tasks)
+            for (task_t task : all_tasks)
             {
-
-                cout << "HERE 3" << endl;
 
                 if (strcmp(task.task.c_str(), task_arg.c_str()) == 0)
                 {
 
                     current_task = task;
-                    cout << "HERE 4 " << task_arg << endl;
 
                 }
 
@@ -221,8 +213,6 @@ int main(int argc, char const *argv[]) {
             }
 
             current_task.D_args = " -Djava.library.path=./" + current_task.natives_args;
-
-            current_task.files_args.at(current_task.files_args.length() - 1) = 0;
 
             current_task.final_javac += current_task.d_args + " -cp ." + current_task.cp_args + " " + current_task.files_args;
             current_task.final_java += ".;" + current_task.d_args + current_task.cp_args + current_task.D_args + " main/Main";
@@ -261,7 +251,7 @@ int main(int argc, char const *argv[]) {
         create_directory(path + "\\" + name + "\\bin");
 
         std::ofstream jocoa_json_file(path + "\\" + name + "\\jocoa.json");
-        jocoa_json_file << "{\n\n\t\"tasks\": [\n\n\t\t{\n\n\t\t\t\"files\": [\n\n\t\t\t\t\"src/main/Main.java\"\n\n\t\t\t],\n\n\t\t\t\"dependencies\": [],\n\n\t\t\t\"natives\": \"lib/natives\",\n\n\t\t\t\"classfiles\": \"bin\"\n\n}]}";
+        jocoa_json_file << "{\n\n\t\"tasks\": [\n\n\t\t{\n\n\t\t\t\"task\": \"main\",\n\n\t\t\t\"files\": [\n\n\t\t\t\t\"src/main/Main.java\"\n\n\t\t\t],\n\n\t\t\t\"dependencies\": [],\n\n\t\t\t\"natives\": \"lib/natives\",\n\n\t\t\t\"classfiles\": \"bin\"\n\n\t\t}\n\n\t]\n\n}";
         jocoa_json_file.close();
         
         std::ofstream main_java_file(path + "\\" + name + "\\src\\main\\Main.java");
