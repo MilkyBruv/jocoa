@@ -242,20 +242,43 @@ int main(int argc, char const *argv[]) {
 
     } else if (strcmp(mode.c_str(), "new") == 0) {
 
-        string name = argv[2];
+        #if defined(__WIN32__)
 
-        create_directory(path + "\\" + name);
-        create_directory(path + "\\" + name + "\\src\\main");
-        create_directory(path + "\\" + name + "\\lib\\natives");
-        create_directory(path + "\\" + name + "\\bin");
+            string name = argv[2];
 
-        std::ofstream jocoa_json_file(path + "\\" + name + "\\jocoa.json");
-        jocoa_json_file << "{\n\n\t\"tasks\": [\n\n\t\t{\n\n\t\t\t\"task\": \"main\",\n\n\t\t\t\"files\": [\n\n\t\t\t\t\"src/main/Main.java\"\n\n\t\t\t],\n\n\t\t\t\"dependencies\": [],\n\n\t\t\t\"natives\": \"lib/natives\",\n\n\t\t\t\"classfiles\": \"bin\"\n\n\t\t}\n\n\t]\n\n}";
-        jocoa_json_file.close();
-        
-        std::ofstream main_java_file(path + "\\" + name + "\\src\\main\\Main.java");
-        main_java_file << "package main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello world!\");\n\n\t}\n\n}";
-        main_java_file.close();
+            create_directory(path + "\\" + name);
+            create_directory(path + "\\" + name + "\\src\\main");
+            create_directory(path + "\\" + name + "\\lib\\natives");
+            create_directory(path + "\\" + name + "\\bin");
+
+            std::ofstream jocoa_json_file(path + "\\" + name + "\\jocoa.json");
+            jocoa_json_file << "{\n\n\t\"tasks\": [\n\n\t\t{\n\n\t\t\t\"task\": \"main\",\n\n\t\t\t\"files\": [\n\n\t\t\t\t\"src/main/Main.java\"\n\n\t\t\t],\n\n\t\t\t\"dependencies\": [],\n\n\t\t\t\"natives\": \"lib/natives\",\n\n\t\t\t\"classfiles\": \"bin\"\n\n\t\t}\n\n\t]\n\n}";
+            jocoa_json_file.close();
+            
+            std::ofstream main_java_file(path + "\\" + name + "\\src\\main\\Main.java");
+            main_java_file << "package main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello world!\");\n\n\t}\n\n}";
+            main_java_file.close();
+
+        #endif
+
+        #if defined(__linux__)
+
+            string name = argv[2];
+
+            create_directory(path + "/" + name);
+            create_directory(path + "/" + name + "/src/main");
+            create_directory(path + "/" + name + "/lib/natives");
+            create_directory(path + "/" + name + "/bin");
+
+            std::ofstream jocoa_json_file(path + "/" + name + "/jocoa.json");
+            jocoa_json_file << "{\n\n\t\"tasks\": [\n\n\t\t{\n\n\t\t\t\"task\": \"main\",\n\n\t\t\t\"files\": [\n\n\t\t\t\t\"src/main/Main.java\"\n\n\t\t\t],\n\n\t\t\t\"dependencies\": [],\n\n\t\t\t\"natives\": \"lib/natives\",\n\n\t\t\t\"classfiles\": \"bin\"\n\n\t\t}\n\n\t]\n\n}";
+            jocoa_json_file.close();
+            
+            std::ofstream main_java_file(path + "/" + name + "/src/main/Main.java");
+            main_java_file << "package main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello world!\");\n\n\t}\n\n}";
+            main_java_file.close();
+
+        #endif
 
     } else if (strcmp(mode.c_str(), "path") == 0) {
 
