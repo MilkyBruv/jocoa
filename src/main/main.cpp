@@ -3,9 +3,8 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <nlohmann/json.hpp>
 #include <stdio.h>
-#include <direct.h>
+#include "../../lib/json.hpp"
 
 using std::string;
 using std::vector;
@@ -257,6 +256,11 @@ int main(int argc, char const *argv[]) {
         std::ofstream main_java_file(path + "\\" + name + "\\src\\main\\Main.java");
         main_java_file << "package main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello world!\");\n\n\t}\n\n}";
         main_java_file.close();
+
+    } else if (strcmp(mode.c_str(), "path") == 0) {
+
+        cout << path << endl;
+        cout << "this is a test" << endl;
 
     }
     
