@@ -24,8 +24,8 @@ typedef struct task_t
     string natives;
     string classfiles;
 
-    string final_javac = "javac -d ";
-    string final_java = "java -cp ";
+    string final_javac = "sudo javac -d ";
+    string final_java = "sudo java -cp ";
     string final_cmd = "";
 
     string d_args = "bin";
@@ -212,16 +212,30 @@ int main(int argc, char const *argv[]) {
             }
 
             current_task.D_args = " -Djava.library.path=./" + current_task.natives_args;
-
             current_task.final_javac += current_task.d_args + " -cp ." + current_task.cp_args + " " + current_task.files_args;
-            current_task.final_java += ".;" + current_task.d_args + current_task.cp_args + current_task.D_args + " main/Main";
 
-            cout << current_task.final_javac << "\n";
-            cout << current_task.final_java << "\n";
+            #if defined(__WIN32__)
 
-            system("cmd /c");
-            system(current_task.final_javac.c_str());
-            system(current_task.final_java.c_str());
+                current_task.final_java += ".;" + current_task.d_args + current_task.cp_args + current_task.D_args + " main/Main";
+                
+                cout << current_task.final_java << "\n";
+                cout << current_task.final_javac << "\n";
+
+                system("cmd /c");
+                system(current_task.final_javac.c_str());
+                system(current_task.final_java.c_str());
+
+            #elif __linux__
+                
+                current_task.final_java += ".:" + current_task.d_args + current_task.cp_args + current_task.D_args + " main/Main";
+                
+                cout << current_task.final_java << "\n";
+                cout << current_task.final_javac << "\n";
+
+                system(current_task.final_javac.c_str());
+                system(current_task.final_java.c_str());
+
+            #endif
 
             // javac   -d <classfiles>   -cp .;1.jar;2,jar   dir1/*.java dir2/*.java
             // java   -cp .;<classfiles>;1.jar;2.jar   -Djava.library.path=<dll dir>   main/Main
@@ -259,9 +273,7 @@ int main(int argc, char const *argv[]) {
             main_java_file << "package main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello world!\");\n\n\t}\n\n}";
             main_java_file.close();
 
-        #endif
-
-        #if defined(__linux__)
+        #elif __linux__
 
             string name = argv[2];
 
