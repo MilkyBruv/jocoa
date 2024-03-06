@@ -214,12 +214,13 @@ int main(int argc, char const *argv[]) {
             current_task.D_args = " -Djava.library.path=./" + current_task.natives_args;
             current_task.final_javac += current_task.d_args + " -cp ." + current_task.cp_args + " " + current_task.files_args;
 
+            cout << current_task.final_javac << "\n";
+
             #if defined(__WIN32__)
 
                 current_task.final_java += ".;" + current_task.d_args + current_task.cp_args + current_task.D_args + " main/Main";
                 
                 cout << current_task.final_java << "\n";
-                cout << current_task.final_javac << "\n";
 
                 system("cmd /c");
                 system(current_task.final_javac.c_str());
@@ -230,7 +231,6 @@ int main(int argc, char const *argv[]) {
                 current_task.final_java += ".:" + current_task.d_args + current_task.cp_args + current_task.D_args + " main/Main";
                 
                 cout << current_task.final_java << "\n";
-                cout << current_task.final_javac << "\n";
 
                 system(current_task.final_javac.c_str());
                 system(current_task.final_java.c_str());
