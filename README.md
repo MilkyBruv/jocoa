@@ -4,54 +4,59 @@ A simple Java compiler argument generator using C++ and Json.
 
 ## Installation
 
-Download the source code, then run these commands (replace dirs with your own).
+Download the source code, then use the make command to compile for your OS.
 
+### Windows
 ```
-C:/> mkdir jocoa
-C:/> cd "C:/path/to/sourcecode/"
-C:/path/to/sourcecode/> make
+C:/path/to/sourcecode/> make win
 ```
 
-Then add `C:/jocoa/` to PATH.
+### Linux
+```
+usr@device:~/path/to/sourcecode/$ make linux
+Enter Password for usr:
+```
 
 ## Usage
 
-Go to the root folder of your java project, then create a file called `jocoa.json`.
+To create a new project, use the `new` argument.
 
-The json file will contain only 4 variables: `files`, `dependencies`, `natives`, and `classfiles`:
+```
+$ jocoa new ProjectName
+```
 
-```json
+This will create a basic Java project filetree with a basic entrypoint.
+
+```jsonc
 {
 
-    "files": [
+    "tasks": [
 
-        "src/main/*.java",
-        "src/main/coolStuff/*.java",
-        "src/other/*.java"
+        {
 
-    ],
+            "task": "main",
 
-    "dependencies": [
+            "files": [
 
-        "lib/common.jar",
-        "lib/cool-stuff-0.4.5.jar",
-        "lib/amazinglib/amazing-library-1.2.jar"
+                "src/main/*.java",
+                "src/other/Other.java"
 
-    ],
+            ],
 
-    "natives": "<.dll & .so dir>",
+            "dependencies": [
 
-    "classfiles": "<.class target dir>"
+                "lib/commons-v1.8.0.jar",
+                "lib/other/my-crap.jar"
+
+            ],
+
+            "natives": "lib/natives",
+
+            "classfiles": "bin"
+
+        }
+
+    ]
 
 }
 ```
-
-`files` - List of relative path to all `.java` files.
-
-`dependancies` - List of relative path the all `.jar` libraries.
-
-`natives` - Path to `.dll` and `.so` files.
-
-`classfiles` - Name of folder `.class` files will be created in.
-
-To compile, run `jocoa` in the base dir of your java project and your project should compile and run.
