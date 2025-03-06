@@ -69,6 +69,16 @@
         "locale": "cpp",
         "print": "cpp",
         "queue": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "any": "cpp",
+        "codecvt": "cpp",
+        "map": "cpp",
+        "numeric": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp",
+        "ranges": "cpp",
+        "cinttypes": "cpp",
+        "valarray": "cpp",
+        "__split_buffer": "cpp"
     }
 }

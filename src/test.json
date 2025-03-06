@@ -1,0 +1,19 @@
+{
+    "tasks": [
+        {
+            "projectName": "TestProject",
+            "projectType": "library/runnable",
+            "sourceFiles": [
+                "1",
+                "2",
+                "3"
+            ],
+            "dependencies": [
+                "1",
+                "2",
+                "3"
+            ],
+            "natives": "lib/natives"
+        }
+    ]
+}
