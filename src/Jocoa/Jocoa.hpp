@@ -19,8 +19,12 @@ typedef struct Task
 class Jocoa
 {
 private:
-    static bool createDirectory(string path);
+    static void createDirectory(string path);
+    static void createFile(string path);
+    static void writeFile(string path, string contents);
 public:
+    static string currentPath;
+    static void init();
     static void _new(string args[]);
     static void _search(string args[]);
     static void _run(string args[]);

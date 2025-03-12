@@ -1,0 +1,15 @@
+{
+	"tasks": [
+		{
+			"projectName": "Test",
+			"projectType": "runnable",
+			"sourceFiles": [
+				"src/main/Main.java"
+			],
+			"dependencies": [
+				
+			],
+			"natives": "lib/natives"
+		}
+	]
+}

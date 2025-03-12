@@ -79,6 +79,9 @@
         "ranges": "cpp",
         "cinttypes": "cpp",
         "valarray": "cpp",
-        "__split_buffer": "cpp"
+        "__split_buffer": "cpp",
+        "__hash_table": "cpp",
+        "__node_handle": "cpp",
+        "__tree": "cpp"
     }
 }
