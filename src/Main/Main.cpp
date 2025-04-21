@@ -1,35 +1,43 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "./../../lib/include/json.hpp"
+#include <string.h>
 #include "./../Jocoa/Jocoa.hpp"
 
 using std::string;
-using namespace nlohmann;
 
 int main(int argc, char const *argv[])
 {
-    std::cout << "test" << std::endl;
+    // Set logger to verbose
+    Logger::setVerbose(true);
+
     // Take arguments from argv and put them in a string array
     string args[argc];
     for (size_t i = 0; i < argc; i++)
     {
         args[i] = string(argv[i]);
-        std::cout << args[i] << ", ";
     }
 
-    // std::fstream jsonFile("./src/test.json");
-    // json jsonData;
-    // jsonFile >> jsonData;
-    // string thing = jsonData["things"][0]["name"];
-    // std::cout << thing << std::endl;
-
+    // Initialize Jocoa
     Jocoa::init();
 
-    if (strcmp(args[1].c_str(), "new") == 0)
+    // Detect command
+    if (argc >= 2)
     {
-        Jocoa::_new(args);
+        if (strcmp(args[1].c_str(), "new") == 0)
+        {
+            Jocoa::_new(args);
+        }
+        else if (strcmp(args[1].c_str(), "run") == 0)
+        {
+            Jocoa::_run(args);
+        }
+        else
+        {
+            Jocoa::_help(args);
+        } 
     }
+    else { Jocoa::_help(args); }
 
     return 0;
 }

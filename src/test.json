@@ -1,19 +1,16 @@
 {
-    "tasks": [
-        {
-            "projectName": "TestProject",
-            "projectType": "library/runnable",
-            "sourceFiles": [
-                "1",
-                "2",
-                "3"
-            ],
-            "dependencies": [
-                "1",
-                "2",
-                "3"
-            ],
-            "natives": "lib/natives"
-        }
-    ]
+    "name": "TestProject",
+    "type": "library/runnable",
+    "package": "net.milky.project",
+    "sourceFiles": [
+        "1",
+        "2",
+        "3"
+    ],
+    "dependencies": [
+        "1",
+        "2",
+        "3"
+    ],
+    "natives": "lib/natives"
 }

@@ -1,4 +1,4 @@
-package main;
+package net.kai.Test.main;
 
 public class Main {
 

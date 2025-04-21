@@ -5,17 +5,33 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
+bool Logger::verbose = false;
+
+void Logger::setVerbose(bool state)
+{
+    verbose = state;
+}
+
 void Logger::info(string message)
 {
-    cout << "INFO: " << message << endl;
+    if (verbose)
+    {
+        cout << "INFO: " << message << endl;
+    }
 }
 
 void Logger::warn(string message)
 {
-    cout << "WARN: " << message << endl;
+    if (verbose)
+    {
+        cout << "\033[31mWARN: " << message << "\033[39m" << endl;
+    }
 }
 
 void Logger::error(string message)
 {
-    cerr << "ERROR: " << message << endl;
+    if (verbose)
+    {
+        cerr << "ERROR: " << message << endl;
+    }
 }

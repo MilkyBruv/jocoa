@@ -1,15 +1,12 @@
 {
-	"tasks": [
-		{
-			"projectName": "Test",
-			"projectType": "runnable",
-			"sourceFiles": [
-				"src/main/Main.java"
-			],
-			"dependencies": [
-				
-			],
-			"natives": "lib/natives"
-		}
-	]
+	"name": "Test",
+	"type": "runnable",
+	"package": "net.kai.Test",
+	"sourceFiles": [
+		"src/net/kai/Test/main/Main.java"
+	],
+	"dependencies": [
+		
+	],
+	"natives": "lib/natives"
 }
