@@ -10,6 +10,7 @@
     #define CP_SEPARATOR ";"
     #include <windows.h>
     #include <Lmcons.h>
+    #include <codecvt>
 #elif defined(__linux__) || defined(_APPLE__) || defined(__unix__)
     #define CP_SEPARATOR ":"
     #include <unistd.h>

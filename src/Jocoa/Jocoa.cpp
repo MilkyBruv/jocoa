@@ -4,7 +4,6 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
-#include "Jocoa.hpp"
 
 using namespace nlohmann;
 using std::cout;
@@ -65,7 +64,7 @@ vector<string> Jocoa::split(string str, string delimiter)
 void Jocoa::init()
 {
     // Get current path
-    currentPath = std::filesystem::current_path();
+    currentPath = std::filesystem::current_path().string();
 }
 
 void Jocoa::_help(string args[])
@@ -107,10 +106,11 @@ void Jocoa::_new(string args[])
     // Get system username
     string user;
     #if defined(_WIN32) || defined(_WIN64)
-        char userBuffer[UNLEN + 1];
+        wchar_t userBuffer[UNLEN + 1];
         DWORD userLen = UNLEN + 1;
-        GetUserName(userBuffer, &userLen);
-        user = userBuffer;
+        GetUserNameW(userBuffer, &userLen);
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+        user = converter.to_bytes(userBuffer);
     #elif defined(__linux__) || defined(_APPLE__) || defined(__unix__)
         char userBuffer[512];
         getlogin_r(userBuffer, 512);
@@ -189,14 +189,13 @@ void Jocoa::_run(string args[])
     json jsonData;
     jsonFile >> jsonData;
     
-    Task task = {
-        .name = jsonData["name"], 
-        .type = jsonData["type"],
-        .package = jsonData["package"],
-        .sourceFiles = jsonData["sourceFiles"],
-        .dependencies = jsonData["dependencies"],
-        .natives = jsonData["natives"]
-    };
+    Task task;
+    task.name = jsonData["name"];
+    task.type = jsonData["type"];
+    task.package = jsonData["package"];
+    task.sourceFiles = jsonData["sourceFiles"];
+    task.dependencies = jsonData["dependencies"];
+    task.natives = jsonData["natives"];
 
     if (strcmp(task.type.c_str(), "runnable") == 0)
     {   

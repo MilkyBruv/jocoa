@@ -12,7 +12,7 @@ int main(int argc, char const *argv[])
     Logger::setVerbose(true);
 
     // Take arguments from argv and put them in a string array
-    string args[argc];
+    string* args = new string[argc];
     for (size_t i = 0; i < argc; i++)
     {
         args[i] = string(argv[i]);
@@ -38,6 +38,9 @@ int main(int argc, char const *argv[])
         } 
     }
     else { Jocoa::_help(args); }
+
+    // Free args
+    delete[] args;
 
     return 0;
 }

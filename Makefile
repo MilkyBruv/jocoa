@@ -1,13 +1,19 @@
+SOURCES := $(wildcard src/**/*.cpp)
+
 default:
 	g++ src/**/*.cpp -o jocoa
 
+initwin:
+	cd C: && mkdir -p C:/jocoa
+
 gwin:
-	cd C: /d && mkdir jocoa
-	g++ src/**/*.cpp -o C:/jocoa/jocoa.exe
+	g++ $(SOURCES) -o jocoa.exe
+	mv .\jocoa.exe C:\jocoa\jocoa.exe
 
 cwin:
-	cd C: /d && mkdir jocoa
-	clang++ src/**/*.cpp -o C:/jocoa/jocoa.exe
+	make initwin
+	clang++ $(SOURCES) -o jocoa.exe
+	mv .\jocoa.exe C:\jocoa\jocoa.exe
 
 glinux:
 	g++ src/**/*.cpp -o jocoa
