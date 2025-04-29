@@ -7,6 +7,7 @@ initwin:
 	cd C: && mkdir -p C:/jocoa
 
 gwin:
+	make initwin
 	g++ $(SOURCES) -o jocoa.exe
 	mv .\jocoa.exe C:\jocoa\jocoa.exe
 

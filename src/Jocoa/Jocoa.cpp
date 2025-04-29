@@ -208,7 +208,15 @@ void Jocoa::_run(string args[])
 
 void Jocoa::_clean(string args[])
 {
-    // 
+    // Read json file
+    std::fstream jsonFile(currentPath + "/jocoa.json");
+    json jsonData;
+    jsonFile >> jsonData;
+    string name = jsonData["name"];
+
+    // Delete and recreate bin folder
+    std::filesystem::remove_all(currentPath + "/" + name + "/bin");
+    createDirectory(name + "bin");
 }
 
 void Jocoa::_package(string args[])
