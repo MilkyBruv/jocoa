@@ -32,6 +32,10 @@ int main(int argc, char const *argv[])
         {
             Jocoa::_run(args);
         }
+        else if (strcmp(args[1].c_str(), "search") == 0)
+        {
+            Jocoa::_search(args);
+        }
         else
         {
             Jocoa::_help(args);

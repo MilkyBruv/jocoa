@@ -1,4 +1,4 @@
-package net.Kai.TestProject.main;
+package net.Kai.T.main;
 
 public class Main {
 

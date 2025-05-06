@@ -5,7 +5,7 @@ using std::cout;
 using std::cerr;
 using std::endl;
 
-bool Logger::verbose = false;
+bool Logger::verbose = true;
 
 void Logger::setVerbose(bool state)
 {

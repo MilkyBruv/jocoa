@@ -19,7 +19,7 @@
 using std::string;
 using std::vector;
 
-typedef struct Task
+typedef struct JsonData
 {
     string name;
     string type;
@@ -27,7 +27,7 @@ typedef struct Task
     vector<string> sourceFiles;
     vector<string> dependencies;
     string natives;
-} Task;
+} JsonData;
 
 class Jocoa
 {
@@ -38,6 +38,7 @@ private:
     static vector<string> split(string str, string delimiter);
 public:
     static string currentPath;
+    static JsonData jsonData;
     static void init();
     static void _help(string args[]);
     static void _new(string args[]);

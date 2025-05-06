@@ -11,6 +11,7 @@ using std::cin;
 using std::endl;
 
 string Jocoa::currentPath = "";
+JsonData Jocoa::jsonData;
 
 void Jocoa::createDirectory(string path)
 {
@@ -65,6 +66,25 @@ void Jocoa::init()
 {
     // Get current path
     currentPath = std::filesystem::current_path().string();
+
+    // Check if json file exists
+    if (!std::filesystem::is_regular_file(currentPath + "/jocoa.json"))
+    {
+        Logger::warn("Invalid Project, no jocoa.json file found");
+        return;
+    }
+
+    // Load json data from jocoa.json file
+    std::fstream jsonFile(currentPath + "/jocoa.json");
+    json json;
+    jsonFile >> json;
+    
+    jsonData.name = json["name"];
+    jsonData.type = json["type"];
+    jsonData.package = json["package"];
+    jsonData.sourceFiles = json["sourceFiles"];
+    jsonData.dependencies = json["dependencies"];
+    jsonData.natives = json["natives"];
 }
 
 void Jocoa::_help(string args[])
@@ -142,24 +162,41 @@ void Jocoa::_new(string args[])
     }
     if (typeStr[0] == 'r') { typeStr = "runnable"; }
     else if (typeStr[0] == 'l') { typeStr = "library"; }
+    type = typeStr[0];
 
     vector<string> packageTokens = split(packagePath, "/");
 
     // Create file and folders
     createDirectory(name);
     createDirectory(name + "/src");
-    createDirectory(name + "/src/" + packageTokens[0]);
-    createDirectory(name + "/src/" + packageTokens[0] + "/" + packageTokens[1]);
-    createDirectory(name + "/src/" + packagePath);
-    createDirectory(name + "/src/" + packagePath + "/main");
+    createDirectory(name + "/src/main");
+    createDirectory(name + "/src/main/java");
+    createDirectory(name + "/src/main/java/" + packageTokens[0]);
+    createDirectory(name + "/src/main/java/" + packageTokens[0] + "/" + packageTokens[1]);
+    createDirectory(name + "/src/main/java/" + packagePath);
+    if (type == 'r') { createDirectory(name + "/src/main/java/" + packagePath + "/main"); }
     createDirectory(name + "/lib");
     createDirectory(name + "/lib/natives");
     createDirectory(name + "/res");
     createDirectory(name + "/bin");
     createFile(name + "/jocoa.json");
     writeFile(name + "/jocoa.json", "{\n\t\"name\": \"" + name + "\",\n\t\"type\": \"" + typeStr + "\",\n\t\"package\": \"" + package + "\",\n\t\"sourceFiles\": [\n\t\t\"src/" + packagePath + "/main/Main.java\"\n\t],\n\t\"dependencies\": [\n\t\t\n\t],\n\t\"natives\": \"lib/natives\"\n}");
-    createFile(name + "/src/" + packagePath + "/main/Main.java");
-    writeFile(name + "/src/" + packagePath + "/main/Main.java", "package " + package + ".main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello World!\");\n\n\t}\n\n}");
+
+    if (type == 'r')
+    {
+        createFile(name + "/src/main/java/" + packagePath + "/main/Main.java");
+        writeFile(name + "/src/main/java/" + packagePath + "/main/Main.java", "package " + package + ".main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello World!\");\n\n\t}\n\n}");
+    }
+    else if (type == 'l')
+    {
+        // Create test stuff for library project type
+        createDirectory(name + "/src/test");
+        createDirectory(name + "/src/test/java");
+        createDirectory(name + "/src/test/java/" + packageTokens[0]);
+        createDirectory(name + "/src/test/java/" + packageTokens[0] + "/" + packageTokens[1]);
+        createDirectory(name + "/src/test/java/" + packagePath);
+        createDirectory(name + "/src/test/java/" + packagePath + "/main");
+    }
 }
 
 void Jocoa::_search(string args[])
@@ -171,8 +208,18 @@ void Jocoa::_search(string args[])
         return;
     }
 
-    // Check if main folder actually exists
-    // if ()
+    // Get package as a path
+    string packagePath = jsonData.package;
+    for (int i = 0; i < packagePath.length(); i++) { if (packagePath[i] == '.') { packagePath[i] = '/'; } }
+
+    // If runnable, just check the main folder
+    if (jsonData.type[0] == 'r')
+    {
+        for (const auto& file : std::filesystem::recursive_directory_iterator(currentPath))
+        {
+            cout << file.path() << endl;
+        }
+    }
 }
 
 void Jocoa::_run(string args[])
@@ -185,21 +232,9 @@ void Jocoa::_run(string args[])
         return;
     }
 
-    std::fstream jsonFile(currentPath + "/jocoa.json");
-    json jsonData;
-    jsonFile >> jsonData;
-    
-    Task task;
-    task.name = jsonData["name"];
-    task.type = jsonData["type"];
-    task.package = jsonData["package"];
-    task.sourceFiles = jsonData["sourceFiles"];
-    task.dependencies = jsonData["dependencies"];
-    task.natives = jsonData["natives"];
-
-    if (strcmp(task.type.c_str(), "runnable") == 0)
+    if (strcmp(jsonData.type.c_str(), "runnable") == 0)
     {   
-        for (auto &&i : task.sourceFiles)
+        for (auto &&i : jsonData.sourceFiles)
         {
             cout << i + ",";
         }
@@ -208,15 +243,9 @@ void Jocoa::_run(string args[])
 
 void Jocoa::_clean(string args[])
 {
-    // Read json file
-    std::fstream jsonFile(currentPath + "/jocoa.json");
-    json jsonData;
-    jsonFile >> jsonData;
-    string name = jsonData["name"];
-
     // Delete and recreate bin folder
-    std::filesystem::remove_all(currentPath + "/" + name + "/bin");
-    createDirectory(name + "bin");
+    std::filesystem::remove_all(currentPath + "/" + jsonData.name + "/bin");
+    createDirectory(jsonData.name + "bin");
 }
 
 void Jocoa::_package(string args[])

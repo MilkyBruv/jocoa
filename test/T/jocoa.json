@@ -1,9 +1,9 @@
 {
-	"name": "TestProject",
+	"name": "T",
 	"type": "runnable",
-	"package": "net.Kai.TestProject",
+	"package": "net.Kai.T",
 	"sourceFiles": [
-		"src/net/Kai/TestProject/main/Main.java"
+		"src/net/Kai/T/main/Main.java"
 	],
 	"dependencies": [
 		
