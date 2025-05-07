@@ -31,6 +31,7 @@ void Jocoa::createFile(string path)
 {
     // Create file
     std::ofstream file(currentPath + "/" + path);
+    std::filesystem::resize_file(currentPath + "/" + path, 0);
     file.close();
     Logger::info("Created \t ./" + path);
 }
@@ -39,6 +40,7 @@ void Jocoa::writeFile(string path, string contents)
 {
     // Create and write to file
     std::ofstream file(currentPath + "/" + path);
+    std::filesystem::resize_file(currentPath + "/" + path, 0);
     file << contents;
     file.close();
     Logger::info("Wrote to \t ./" + path);
@@ -247,10 +249,13 @@ void Jocoa::_search(string args[])
     string currentFile;
     string pathToCheck;
 
+    string newJson = "{\n\t\"name\": \"" + jsonData.name + "\",\n\t\"type\": \"" + jsonData.type + "\",\n\t\"package\": \"" + jsonData.package + "\",\n\t\"sourceFiles\": [";
+
     // Clear current source files and dependencies
     jsonData.sourceFiles.clear();
     jsonData.dependencies.clear();
 
+    // Find all .java and .jar files and add them to sourceFiles and dependencies
     for (const auto& file : std::filesystem::recursive_directory_iterator(currentPath))
     {   
         if (file.path().extension() == ".java")
@@ -258,14 +263,41 @@ void Jocoa::_search(string args[])
             currentFile = file.path().string();
             simplifyPath(currentFile);
             jsonData.sourceFiles.push_back(currentFile);
+            cout << currentFile << endl;
         }
         else if (file.path().extension() == ".jar")
         {
             currentFile = file.path().string();
             simplifyPath(currentFile);
             jsonData.dependencies.push_back(currentFile);
+            cout << currentFile << endl;
         }
     }
+
+    for (size_t i = 0; i < jsonData.sourceFiles.size(); i++)
+    {
+        newJson += "\n\t\t\"" + jsonData.sourceFiles[i] + "\"";
+
+        // If not at the end then add ",", else move onto dependencies
+        if (i != jsonData.sourceFiles.size() - 1) { newJson += ","; }
+        else { newJson += "\n\t],\n\t\"dependencies\": ["; }
+    }
+    
+    if (jsonData.dependencies.size() != 0)
+    {
+        for (size_t i = 0; i < jsonData.dependencies.size(); i++)
+        {
+            newJson += "\n\t\t\"" + jsonData.dependencies[i] + "\"";
+
+            // If not at the end then add ",", else add rest of json data
+            if (i != jsonData.dependencies.size() - 1) { newJson += ","; }
+        }
+    }
+    
+    newJson += "\n\t],\n\t\"natives\": \"" + jsonData.natives + "\"\n}";
+
+    // Write new json data to json file
+    writeFile("jocoa.json", newJson);
 }
 
 void Jocoa::_run(string args[])
@@ -282,8 +314,7 @@ void Jocoa::_run(string args[])
     {   
         for (string& file : jsonData.sourceFiles)
         {
-            simplifyPath(file);
-            cout << file << endl;
+            // 
         }
     }
 }
