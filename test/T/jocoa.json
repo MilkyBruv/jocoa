@@ -1,0 +1,12 @@
+{
+	"name": "T",
+	"type": "runnable",
+	"package": "net.Kai.T",
+	"sourceFiles": [
+		"./src/main/java/net/Kai/T/main/Main.java",
+		"./src/main/java/net/Kai/T/test/Test.java"
+	],
+	"dependencies": [
+	],
+	"natives": "lib/natives"
+}

@@ -19,7 +19,7 @@ int main(int argc, char const *argv[])
     }
 
     // Initialize Jocoa
-    Jocoa::init();
+    Jocoa::init(args);
 
     // Detect command
     if (argc >= 2)
@@ -35,6 +35,10 @@ int main(int argc, char const *argv[])
         else if (strcmp(args[1].c_str(), "search") == 0)
         {
             Jocoa::_search(args);
+        }
+        else if (strcmp(args[1].c_str(), "repair") == 0)
+        {
+            Jocoa::_repair(args);
         }
         else
         {

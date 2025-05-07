@@ -94,12 +94,21 @@ void Jocoa::simplifyPath(string &path)
     localisePath(path);
 }
 
-void Jocoa::init()
+void Jocoa::init(string args[])
 {
     // Get current path
     currentPath = std::filesystem::current_path().string();
     standardisePath(currentPath);
     cout << currentPath << endl;
+
+    // Ignore json file stuff if repairing project
+    if (sizeof(args) / sizeof(args[0]) >= 2)
+    {
+        if (strcmp(args[1].c_str(), "repair") == 0)
+        {
+            return;
+        }
+    }
 
     // Check if json file exists
     if (!std::filesystem::is_regular_file(currentPath + "/jocoa.json"))
@@ -256,11 +265,12 @@ void Jocoa::_search(string args[])
     jsonData.dependencies.clear();
 
     // Find all .java and .jar files and add them to sourceFiles and dependencies
-    for (const auto& file : std::filesystem::recursive_directory_iterator(currentPath))
+    // Only check "src/main" to avoid searching "src/test"
+    for (const auto& file : std::filesystem::recursive_directory_iterator(currentPath + "/src/main"))
     {   
         if (file.path().extension() == ".java")
         {
-            currentFile = file.path().string();
+            currentFile = currentPath + "/src/main/" + file.path().string(); // Add "src/main/" back to path
             simplifyPath(currentFile);
             jsonData.sourceFiles.push_back(currentFile);
             cout << currentFile << endl;
@@ -274,14 +284,19 @@ void Jocoa::_search(string args[])
         }
     }
 
-    for (size_t i = 0; i < jsonData.sourceFiles.size(); i++)
+    if (jsonData.sourceFiles.size() != 0)
     {
-        newJson += "\n\t\t\"" + jsonData.sourceFiles[i] + "\"";
+        for (size_t i = 0; i < jsonData.sourceFiles.size(); i++)
+        {
+            newJson += "\n\t\t\"" + jsonData.sourceFiles[i] + "\"";
 
-        // If not at the end then add ",", else move onto dependencies
-        if (i != jsonData.sourceFiles.size() - 1) { newJson += ","; }
-        else { newJson += "\n\t],\n\t\"dependencies\": ["; }
+            // If not at the end then add ",", else move onto dependencies
+            if (i != jsonData.sourceFiles.size() - 1) { newJson += ","; }
+        }
     }
+    else { newJson += "\n"; } // Add new line between [] if no sourceFiles for cleaner json
+
+    newJson += "\n\t],\n\t\"dependencies\": [";
     
     if (jsonData.dependencies.size() != 0)
     {
@@ -293,6 +308,7 @@ void Jocoa::_search(string args[])
             if (i != jsonData.dependencies.size() - 1) { newJson += ","; }
         }
     }
+    else { newJson += "\n"; } // Add new line between [] if no dependencies for cleaner json
     
     newJson += "\n\t],\n\t\"natives\": \"" + jsonData.natives + "\"\n}";
 
@@ -310,23 +326,95 @@ void Jocoa::_run(string args[])
         return;
     }
 
+    string javac = "javac -d ./bin -cp .";
+    string java = string("java -cp .") + CP_SEPARATOR + "./bin"; // Have to use string() else char* + char doesn't work
+
+    // If runnable then just compile to class then run
     if (jsonData.type[0] == 'r')
     {   
+        // Add dependencies (.jar files)
+        for (string& dependency : jsonData.dependencies)
+        {
+            javac += CP_SEPARATOR + dependency;
+            java += CP_SEPARATOR + dependency;
+        }
+
+        // Add natives path
+        java += " -Djava.library.path=./lib/natives";
+
+        // Add source files (.java files)
         for (string& file : jsonData.sourceFiles)
         {
-            // 
+            javac += " " + file;
         }
     }
+    else if (jsonData.type[0] == 'l') // If library then package src/main then run src/test
+    {
+        for (string& dependency : jsonData.dependencies)
+        {
+            javac += CP_SEPARATOR + dependency;
+        }
+
+        for (string& file : jsonData.sourceFiles)
+        {
+            javac += " " + file;
+        }
+    }
+
+    // Run and print commands
+    cout << javac << endl;
+    system(javac.c_str());
+    cout << java << endl;
+    system(java.c_str());
 }
 
 void Jocoa::_clean(string args[])
 {
     // Delete and recreate bin folder
-    std::filesystem::remove_all(currentPath + "/" + jsonData.name + "/bin");
-    createDirectory(jsonData.name + "bin");
+    std::filesystem::remove_all(currentPath + "/bin");
+    createDirectory("bin");
 }
 
 void Jocoa::_package(string args[])
+{
+    string jar = "jar cf";
+    string jarLib, java;
+
+    // If runnable compile to jar with main method
+    if (jsonData.type[0] == 'r')
+    {
+        jar += "e " + jsonData.name + ".jar " + jsonData.package + ".main.Main -C ./bin .";
+
+        // Run command
+        cout << jar << endl;
+        system(jar.c_str());
+
+        // Run jar file if specified to
+        if (strcmp(args[2].c_str(), "run") == 0)
+        {
+            java = "java -jar ./" + jsonData.name + ".jar";
+
+            // Run command
+            cout << java << endl;
+            system(java.c_str());
+        }
+    }
+    else if (jsonData.type[0] == 'l') // If library compile to jar without main method
+    {
+        // Compile to ./x.jar and ./lib/x.jar
+        jar += jsonData.name + ".jar -C ./bin ";
+        jarLib = jar + "./lib";
+        jar += '.';
+
+        // Run commands
+        cout << jar << endl;
+        system(jar.c_str());
+        cout << jarLib << endl;
+        system(jarLib.c_str());
+    }
+}
+
+void Jocoa::_repair(string args[])
 {
     // 
 }
