@@ -4,6 +4,7 @@
 #include <iostream>
 #include <filesystem>
 #include <fstream>
+#include "Jocoa.hpp"
 
 using namespace nlohmann;
 using std::cout;
@@ -62,10 +63,41 @@ vector<string> Jocoa::split(string str, string delimiter)
     return tokens;
 }
 
+void Jocoa::standardisePath(string& path)
+{
+    string delimiters[] = {"\\\\", "\\"};
+
+    // Loop through each delimiter, and replace all occurences with standard "/"
+    for (const auto& delimiter : delimiters)
+    {
+        size_t i = 0;
+        while ((i = path.find(delimiter, i)) != string::npos)
+        {
+            path.replace(i, delimiter.length(), "/");
+            i++;
+        }
+    }
+}
+
+void Jocoa::localisePath(string &path)
+{
+    // Replace currentPath with "."
+    path.replace(0, currentPath.length(), ".");
+}
+
+void Jocoa::simplifyPath(string &path)
+{
+    // Standardise and localise path
+    standardisePath(path);
+    localisePath(path);
+}
+
 void Jocoa::init()
 {
     // Get current path
     currentPath = std::filesystem::current_path().string();
+    standardisePath(currentPath);
+    cout << currentPath << endl;
 
     // Check if json file exists
     if (!std::filesystem::is_regular_file(currentPath + "/jocoa.json"))
@@ -107,8 +139,7 @@ void Jocoa::_new(string args[])
     string name, package, defaultPackage, packagePath, typeStr;
     char type;
 
-    cout << "Enter options for new project (options marked with * are required)\n" << 
-        endl;
+    cout << "Enter options for new project (options marked with * are required)\n" << endl;
 
     // Project name
     cout << "*Project name: ";
@@ -213,18 +244,33 @@ void Jocoa::_search(string args[])
     for (int i = 0; i < packagePath.length(); i++) { if (packagePath[i] == '.') { packagePath[i] = '/'; } }
 
     // If runnable, just check the main folder
-    if (jsonData.type[0] == 'r')
-    {
-        for (const auto& file : std::filesystem::recursive_directory_iterator(currentPath))
+    string currentFile;
+    string pathToCheck;
+
+    // Clear current source files and dependencies
+    jsonData.sourceFiles.clear();
+    jsonData.dependencies.clear();
+
+    for (const auto& file : std::filesystem::recursive_directory_iterator(currentPath))
+    {   
+        if (file.path().extension() == ".java")
         {
-            cout << file.path() << endl;
+            currentFile = file.path().string();
+            simplifyPath(currentFile);
+            jsonData.sourceFiles.push_back(currentFile);
+        }
+        else if (file.path().extension() == ".jar")
+        {
+            currentFile = file.path().string();
+            simplifyPath(currentFile);
+            jsonData.dependencies.push_back(currentFile);
         }
     }
 }
 
 void Jocoa::_run(string args[])
 {
-    Jocoa::_search(NULL);
+    Jocoa::_search(args);
 
     if (!std::filesystem::is_regular_file(currentPath + "/jocoa.json"))
     {
@@ -232,11 +278,12 @@ void Jocoa::_run(string args[])
         return;
     }
 
-    if (strcmp(jsonData.type.c_str(), "runnable") == 0)
+    if (jsonData.type[0] == 'r')
     {   
-        for (auto &&i : jsonData.sourceFiles)
+        for (string& file : jsonData.sourceFiles)
         {
-            cout << i + ",";
+            simplifyPath(file);
+            cout << file << endl;
         }
     }
 }

@@ -36,6 +36,9 @@ private:
     static void createFile(string path);
     static void writeFile(string path, string contents);
     static vector<string> split(string str, string delimiter);
+    static void standardisePath(string& path);
+    static void localisePath(string& path);
+    static void simplifyPath(string& path);
 public:
     static string currentPath;
     static JsonData jsonData;

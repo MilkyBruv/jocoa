@@ -1,41 +1,42 @@
 SOURCES := $(wildcard src/**/*.cpp)
+COMP_ARGS := $(SOURCES) -o jocoa.exe -std=c++17
 
 default:
-	g++ src/**/*.cpp -o jocoa
+	g++ $(COMP_ARGS)
 
 initwin:
 	cd C: && mkdir -p C:/jocoa
 
 gwin:
 	make initwin
-	g++ $(SOURCES) -o jocoa.exe
+	g++ $(COMP_ARGS)
 	mv .\jocoa.exe C:\jocoa\jocoa.exe
 
 cwin:
 	make initwin
-	clang++ $(SOURCES) -o jocoa.exe
+	clang++ $(COMP_ARGS)
 	mv .\jocoa.exe C:\jocoa\jocoa.exe
 
 glinux:
-	g++ src/**/*.cpp -o jocoa
+	g++ $(COMP_ARGS)
 	sudo mv jocoa /usr/local/bin
 
 clinux:
-	clang++ src/**/*.cpp -o jocoa
+	clang++ $(COMP_ARGS)
 	sudo mv jocoa /usr/local/bin
 
 test:
-	g++ src/**/*.cpp -o jocoa
+	g++ $(COMP_ARGS)
 	./jocoa test.json
 
 gwin-test:
-	g++ src/**/*.cpp -o jocoa.exe
+	g++ $(COMP_ARGS)
 
 cwin-test:
-	clang++ src/**/*.cpp -o jocoa.exe
+	clang++ $(COMP_ARGS)
 
 glinux-test:
-	g++ src/**/*.cpp -o jocoa
+	g++ $(COMP_ARGS)
 
 clinux-test:
-	clang++ src/**/*.cpp -o jocoa
+	clang++ $(COMP_ARGS)
