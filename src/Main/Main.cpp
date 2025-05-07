@@ -40,6 +40,14 @@ int main(int argc, char const *argv[])
         {
             Jocoa::_repair(args);
         }
+        else if (strcmp(args[1].c_str(), "package") == 0)
+        {
+            Jocoa::_package(args);
+        }
+        else if (strcmp(args[1].c_str(), "clean") == 0)
+        {
+            Jocoa::_clean(args);
+        }
         else
         {
             Jocoa::_help(args);

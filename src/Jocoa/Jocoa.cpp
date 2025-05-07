@@ -101,33 +101,27 @@ void Jocoa::init(string args[])
     standardisePath(currentPath);
     cout << currentPath << endl;
 
-    // Ignore json file stuff if repairing project
-    if (sizeof(args) / sizeof(args[0]) >= 2)
+    if (strcmp(args[1].c_str(), "repair") != 0)
     {
-        if (strcmp(args[1].c_str(), "repair") == 0)
+        // Check if json file exists
+        if (!std::filesystem::is_regular_file(currentPath + "/jocoa.json"))
         {
+            Logger::warn("Invalid Project, no jocoa.json file found");
             return;
         }
-    }
 
-    // Check if json file exists
-    if (!std::filesystem::is_regular_file(currentPath + "/jocoa.json"))
-    {
-        Logger::warn("Invalid Project, no jocoa.json file found");
-        return;
+        // Load json data from jocoa.json file
+        std::fstream jsonFile(currentPath + "/jocoa.json");
+        json json;
+        jsonFile >> json;
+        
+        jsonData.name = json["name"];
+        jsonData.type = json["type"];
+        jsonData.package = json["package"];
+        jsonData.sourceFiles = json["sourceFiles"];
+        jsonData.dependencies = json["dependencies"];
+        jsonData.natives = json["natives"];
     }
-
-    // Load json data from jocoa.json file
-    std::fstream jsonFile(currentPath + "/jocoa.json");
-    json json;
-    jsonFile >> json;
-    
-    jsonData.name = json["name"];
-    jsonData.type = json["type"];
-    jsonData.package = json["package"];
-    jsonData.sourceFiles = json["sourceFiles"];
-    jsonData.dependencies = json["dependencies"];
-    jsonData.natives = json["natives"];
 }
 
 void Jocoa::_help(string args[])
@@ -148,7 +142,6 @@ void Jocoa::_help(string args[])
 void Jocoa::_new(string args[])
 {
     string name, package, defaultPackage, packagePath, typeStr;
-    char type;
 
     cout << "Enter options for new project (options marked with * are required)\n" << endl;
 
@@ -195,7 +188,7 @@ void Jocoa::_new(string args[])
     }
 
     // Type
-    cout << "Project type (r/l), leave blank for default (r): ";
+    cout << "Project type (runnable, r/library, l), leave blank for default (runnable, r): ";
     std::getline(cin, typeStr);
     cout << endl;
     if (typeStr.empty())
@@ -204,7 +197,6 @@ void Jocoa::_new(string args[])
     }
     if (typeStr[0] == 'r') { typeStr = "runnable"; }
     else if (typeStr[0] == 'l') { typeStr = "library"; }
-    type = typeStr[0];
 
     vector<string> packageTokens = split(packagePath, "/");
 
@@ -216,7 +208,7 @@ void Jocoa::_new(string args[])
     createDirectory(name + "/src/main/java/" + packageTokens[0]);
     createDirectory(name + "/src/main/java/" + packageTokens[0] + "/" + packageTokens[1]);
     createDirectory(name + "/src/main/java/" + packagePath);
-    if (type == 'r') { createDirectory(name + "/src/main/java/" + packagePath + "/main"); }
+    if (typeStr[0] == 'r') { createDirectory(name + "/src/main/java/" + packagePath + "/main"); }
     createDirectory(name + "/lib");
     createDirectory(name + "/lib/natives");
     createDirectory(name + "/res");
@@ -224,12 +216,12 @@ void Jocoa::_new(string args[])
     createFile(name + "/jocoa.json");
     writeFile(name + "/jocoa.json", "{\n\t\"name\": \"" + name + "\",\n\t\"type\": \"" + typeStr + "\",\n\t\"package\": \"" + package + "\",\n\t\"sourceFiles\": [\n\t\t\"src/" + packagePath + "/main/Main.java\"\n\t],\n\t\"dependencies\": [\n\t\t\n\t],\n\t\"natives\": \"lib/natives\"\n}");
 
-    if (type == 'r')
+    if (typeStr[0] == 'r')
     {
         createFile(name + "/src/main/java/" + packagePath + "/main/Main.java");
         writeFile(name + "/src/main/java/" + packagePath + "/main/Main.java", "package " + package + ".main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello World!\");\n\n\t}\n\n}");
     }
-    else if (type == 'l')
+    else if (typeStr[0] == 'l')
     {
         // Create test stuff for library project type
         createDirectory(name + "/src/test");
@@ -270,7 +262,7 @@ void Jocoa::_search(string args[])
     {   
         if (file.path().extension() == ".java")
         {
-            currentFile = currentPath + "/src/main/" + file.path().string(); // Add "src/main/" back to path
+            currentFile = file.path().string(); // Add "src/main/" back to path
             simplifyPath(currentFile);
             jsonData.sourceFiles.push_back(currentFile);
             cout << currentFile << endl;
@@ -339,8 +331,15 @@ void Jocoa::_run(string args[])
             java += CP_SEPARATOR + dependency;
         }
 
+        // Create package path
+        string packagePath = jsonData.package;
+        for (int i = 0; i < packagePath.length(); i++)
+        {
+            if (packagePath[i] == '.') { packagePath[i] = '/'; }
+        }
+
         // Add natives path
-        java += " -Djava.library.path=./lib/natives";
+        java += " -Djava.library.path=./lib/natives " + packagePath + "/main/Main";
 
         // Add source files (.java files)
         for (string& file : jsonData.sourceFiles)
@@ -416,5 +415,89 @@ void Jocoa::_package(string args[])
 
 void Jocoa::_repair(string args[])
 {
-    // 
+    string typeStr, name, package, packagePath, currentFile;
+    string newJson = "{\n\t\"name\": \"" + jsonData.name + "\",\n\t\"type\": \"" + jsonData.type + "\",\n\t\"package\": \"" + jsonData.package + "\",\n\t\"sourceFiles\": [";
+
+    // Get project name from current path (current/last folder)
+    name = currentPath.substr(currentPath.find_last_of("/"), currentPath.length());
+
+    // Confirm project package
+    cout << "Package: ";
+    std::getline(cin, package);
+    cout << endl;
+    if (package.empty())
+    {
+        cout << "Please supply a package" << endl;
+        return;
+    }
+
+    // Create package path
+    packagePath = package;
+    for (int i = 0; i < packagePath.length(); i++)
+    {
+        if (packagePath[i] == '.') { packagePath[i] = '/'; }
+    }
+
+    // Confirm project type
+    cout << "Confirm project type (runnable, r/library, l): ";
+    std::getline(cin, typeStr);
+    cout << endl;
+    if (typeStr.empty())
+    {
+        cout << "Please supply a project type" << endl;
+        return;
+    }
+    if (typeStr[0] == 'r') { typeStr = "runnable"; }
+    else if (typeStr[0] == 'l') { typeStr = "library"; }
+
+    // Confirm all .java and .jar files and add them to sourceFiles and dependencies
+    // Only check "src/main" to avoid searching "src/test"
+    for (const auto& file : std::filesystem::recursive_directory_iterator(currentPath + "/src/main"))
+    {   
+        if (file.path().extension() == ".java")
+        {
+            currentFile = file.path().string(); // Add "src/main/" back to path
+            simplifyPath(currentFile);
+            jsonData.sourceFiles.push_back(currentFile);
+            cout << currentFile << endl;
+        }
+        else if (file.path().extension() == ".jar")
+        {
+            currentFile = file.path().string();
+            simplifyPath(currentFile);
+            jsonData.dependencies.push_back(currentFile);
+            cout << currentFile << endl;
+        }
+    }
+
+    if (jsonData.sourceFiles.size() != 0)
+    {
+        for (size_t i = 0; i < jsonData.sourceFiles.size(); i++)
+        {
+            newJson += "\n\t\t\"" + jsonData.sourceFiles[i] + "\"";
+
+            // If not at the end then add ",", else move onto dependencies
+            if (i != jsonData.sourceFiles.size() - 1) { newJson += ","; }
+        }
+    }
+    else { newJson += "\n"; } // Add new line between [] if no sourceFiles for cleaner json
+
+    newJson += "\n\t],\n\t\"dependencies\": [";
+    
+    if (jsonData.dependencies.size() != 0)
+    {
+        for (size_t i = 0; i < jsonData.dependencies.size(); i++)
+        {
+            newJson += "\n\t\t\"" + jsonData.dependencies[i] + "\"";
+
+            // If not at the end then add ",", else add rest of json data
+            if (i != jsonData.dependencies.size() - 1) { newJson += ","; }
+        }
+    }
+    else { newJson += "\n"; } // Add new line between [] if no dependencies for cleaner json
+    
+    newJson += "\n\t],\n\t\"natives\": \"lib/natives\"\n}";
+
+    // Rewrite jocoa.json wit new json data
+    writeFile("jocoa.json", newJson);
 }
