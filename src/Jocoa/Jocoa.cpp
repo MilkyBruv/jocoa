@@ -99,8 +99,7 @@ void Jocoa::init(string args[])
     // Get current path
     currentPath = std::filesystem::current_path().string();
     standardisePath(currentPath);
-    cout << currentPath << endl;
-
+    
     if (strcmp(args[1].c_str(), "repair") != 0)
     {
         // Check if json file exists
@@ -126,17 +125,22 @@ void Jocoa::init(string args[])
 
 void Jocoa::_help(string args[])
 {
-
-    cout << "\033[31m     _                       \n"
-    "    | | ___   ___ ___   __ _ \n"
+    cout << 
+    "\033[31m"
+    "     _\n"
+    "    | | ___   ___ ___   __ _ \t\033[36mv0.1.0\033[31m\n"
     " _  | |/ _ \\ / __/ _ \\ / _` |\n"
     "| |_| | (_) | (_| (_) | (_| |\n"
-    " \\___/ \\___/ \\___\\___/ \\__,_|\n\n"
+    " \\___/ \\___/ \\___\\___/ \\__,_|\t\033[36mgithub.com/MilkyBruv 2025\n\n"
     "\033[39mCommands:\n"
     "\thelp - Displays this command\n"
     "\tnew - Creates new project\n"
+    "\trun - Compiles current project to .class files and runs as a project\n"
+    "\tpackage \033[36m<run>\033[39m - Compiles current project to .class files and packages it to a single .jar\n"
+    "\t\t\033[36mrun\033[39m - Runs the .jar file after packing it\n"
     "\tsearch - Updates current jocoa.json file with all source files and dependency files in the current project\n"
-    "\trun - Compiles current project to .class files and runs as a project" << endl;
+    "\tclean - Cleans current project of compilation files\n"
+    "\trepair - Confirms project information to repair the jocoa.json file if it is broken" << endl;
 }
 
 void Jocoa::_new(string args[])
