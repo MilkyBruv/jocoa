@@ -1,12 +1,12 @@
 {
-	"name": "T",
+	"name": "Lib",
 	"type": "library",
-	"package": "net.Kai.T",
+	"package": "net.Kai.Lib",
 	"sourceFiles": [
-		"src/net/Kai/T/main/Main.java"
+		"./src/main/java/net/Kai/Lib/utils/Utils.java"
 	],
 	"dependencies": [
-		
+
 	],
 	"natives": "lib/natives"
 }
