@@ -14,17 +14,28 @@ using std::endl;
 
 string Jocoa::currentPath = "";
 JsonData Jocoa::jsonData;
+string Jocoa::version = "v0.1.0";
 
 void Jocoa::createDirectory(string path)
 {
-    // Try create directory
-    if (fs::create_directory(currentPath + "/" + path))
+    // Get list of all folders
+    vector<string> folders = split(path, "/");
+    string currentFolder = "";
+
+    // Can only create each folder at a time so loop through to create them all
+    for (const string& folder : folders)
     {
-        Logger::info("Created \t ./" + path);
-    }
-    else
-    {
-        Logger::error("Failed to create \t ./" + path);
+        currentFolder += "/" + folder;
+
+        // Try create directory
+        if (fs::create_directory(currentPath + currentFolder))
+        {
+            Logger::info("Created \t ./" + path);
+        }
+        else
+        {
+            Logger::error("Failed to create \t ./" + path);
+        }
     }
 }
 
@@ -95,6 +106,22 @@ void Jocoa::simplifyPath(string &path)
     localisePath(path);
 }
 
+void Jocoa::searchForFiles(string path, string filetype, vector<string>& jsonArray)
+{
+    string currentFile;
+
+    // Search {path} and check for files with the type of {filetype}, then add them to {jsonArray}
+    for (const fs::directory_entry& file : fs::recursive_directory_iterator(currentPath + "/" + path))
+    {   
+        if (file.path().extension() == filetype)
+        {
+            currentFile = file.path().string();
+            simplifyPath(currentFile);
+            jsonArray.push_back(currentFile);
+        }
+    }
+}
+
 void Jocoa::init(string args[])
 {
     // Get current path
@@ -126,7 +153,7 @@ void Jocoa::_help(string args[])
     cout << 
     "\033[31m"
     "     _\n"
-    "    | | ___   ___ ___   __ _ \t\033[36mv0.1.0\033[31m\n"
+    "    | | ___   ___ ___   __ _ \t\033[36m" + version + "\033[31m\n"
     " _  | |/ _ \\ / __/ _ \\ / _` |\n"
     "| |_| | (_) | (_| (_) | (_| |\n"
     " \\___/ \\___/ \\___\\___/ \\__,_|\t\033[36mgithub.com/MilkyBruv 2025\n\n"
@@ -202,15 +229,8 @@ void Jocoa::_new(string args[])
     vector<string> packageTokens = split(packagePath, "/");
 
     // Create file and folders
-    createDirectory(name);
-    createDirectory(name + "/src");
-    createDirectory(name + "/src/main");
-    createDirectory(name + "/src/main/java");
-    createDirectory(name + "/src/main/java/" + packageTokens[0]);
-    createDirectory(name + "/src/main/java/" + packageTokens[0] + "/" + packageTokens[1]);
-    createDirectory(name + "/src/main/java/" + packagePath);
-    if (typeStr[0] == 'r') { createDirectory(name + "/src/main/java/" + packagePath + "/main"); }
-    createDirectory(name + "/lib");
+    createDirectory(name + "/src" + packagePath);
+    if (typeStr[0] == 'r') { createDirectory(name + "/src" + packagePath + "/main"); }
     createDirectory(name + "/lib/natives");
     createDirectory(name + "/res");
     createDirectory(name + "/bin");
@@ -220,20 +240,19 @@ void Jocoa::_new(string args[])
 
     if (typeStr[0] == 'r')
     {
-        createFile(name + "/src/main/java/" + packagePath + "/main/Main.java");
-        writeFile(name + "/src/main/java/" + packagePath + "/main/Main.java", "package " + package + ".main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello World!\");\n\n\t}\n\n}");
+        createFile(name + "/src/" + packagePath + "/main/Main.java");
+        writeFile(name + "/src/" + packagePath + "/main/Main.java", "package " + package + ".main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello World!\");\n\n\t}\n\n}");
     }
     else if (typeStr[0] == 'l')
     {
         // Create test stuff for library project type
-        createDirectory(name + "/src/test");
-        createDirectory(name + "/src/test/java");
-        createDirectory(name + "/src/test/java/net");
-        createDirectory(name + "/src/test/java/net/user");
-        createDirectory(name + "/src/test/java/net/user/" + name + "Test");
-        createDirectory(name + "/src/test/java/net/user/" + name + "Test/main");
-        createFile(name + "/src/test/java/net/user/" + name + "Test/main/Main.java");
-        writeFile(name + "/src/test/java/net/user/" + name + "Test/main/Main.java", "package " + package + ".main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello World!\");\n\n\t}\n\n}");
+        createDirectory(name + "/test/" + packagePath + "Test/main");
+        createFile(name + "/test/" + packagePath + "Test/main/Main.java");
+        writeFile(name + "/test/" + packagePath + "Test/main/Main.java", "package " + package + ".main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello World!\");\n\n\t}\n\n}");
+        
+        createDirectory(name + "/src/" + packagePath + "/library");
+        createFile(name + "/src/" + packagePath + "/library/Library.java");
+        writeFile(name + "/src/" + packagePath + "/library/Library.java", "package " + package + ".library;\n\npublic class Library {\n\n\tpublic static void test() {\n\n\t\tSystem.out.println(\"Hello World from Library!\");\n\n\t}\n\n}");
     }
 }
 
@@ -260,25 +279,9 @@ void Jocoa::_search(string args[])
     jsonData.sourceFiles.clear();
     jsonData.dependencies.clear();
 
-    // Find all .java and .jar files and add them to sourceFiles and dependencies
-    // Only check "src/main" to avoid searching "src/test"
-    for (const auto& file : fs::recursive_directory_iterator(currentPath + "/src/main"))
-    {   
-        if (file.path().extension() == ".java")
-        {
-            currentFile = file.path().string(); // Add "src/main/" back to path
-            simplifyPath(currentFile);
-            jsonData.sourceFiles.push_back(currentFile);
-            cout << currentFile << endl;
-        }
-        else if (file.path().extension() == ".jar")
-        {
-            currentFile = file.path().string();
-            simplifyPath(currentFile);
-            jsonData.dependencies.push_back(currentFile);
-            cout << currentFile << endl;
-        }
-    }
+    // Search for source files and libraries
+    searchForFiles(currentPath + "/src", ".java", jsonData.sourceFiles);
+    searchForFiles(currentPath + "/lib", ".jar", jsonData.dependencies);
 
     if (jsonData.sourceFiles.size() != 0)
     {
@@ -355,17 +358,18 @@ void Jocoa::_run(string args[])
     {
         _package(args); // Package to .jar and use as a library for src/test source files
 
-        string currentFile;
+        searchForFiles(currentPath + "/src", ".java", jsonData.sourceFiles);
+        searchForFiles(currentPath + "/lib", ".jar", jsonData.dependencies);
 
-        // Only check "src/test" to avoid searching "src/main"
-        for (const auto& file : fs::recursive_directory_iterator(currentPath + "/src/test"))
-        {   
-            if (file.path().extension() == ".java")
-            {
-                currentFile = file.path().string();
-                simplifyPath(currentFile);
-                javac += " " + currentFile; // Use test source files and do not add to json stuff
-            }
+        for (const string& dependency : jsonData.dependencies)
+        {
+            javac += CP_SEPARATOR + dependency;
+            java += CP_SEPARATOR + dependency;
+        }
+
+        for (const string& file : jsonData.sourceFiles)
+        {
+            javac += " " + file;
         }
     }
 
@@ -388,6 +392,8 @@ void Jocoa::_package(string args[])
     string jar = "jar cf";
     string java;
 
+    _search(args);
+
     // If runnable compile to jar with main method
     if (jsonData.type[0] == 'r')
     {
@@ -407,11 +413,10 @@ void Jocoa::_package(string args[])
             system(java.c_str());
         }
     }
-    else if (jsonData.type[0] == 'l') // If library compile to jar without main method
+    else if (jsonData.type[0] == 'l') // If library then compile to jar without main method
     {
         // Compile to ./x.jar and ./lib/x.jar
-        jar += " " + jsonData.name + ".jar -C ./bin ";
-        jar += '.';
+        jar += " " + jsonData.name + ".jar -C ./bin .";
         string moveJar = "mv " + jsonData.name + ".jar ./lib/" + jsonData.name + ".jar";
 
         // Run commands
@@ -419,6 +424,8 @@ void Jocoa::_package(string args[])
         system(jar.c_str());
         system(moveJar.c_str());
         system(jar.c_str());
+
+        _search(args);
 
         // Run jar file if specified to
         if (strcmp(args[2].c_str(), "run") == 0)

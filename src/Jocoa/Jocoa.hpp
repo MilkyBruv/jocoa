@@ -39,9 +39,11 @@ private:
     static void standardisePath(string& path);
     static void localisePath(string& path);
     static void simplifyPath(string& path);
+    static void searchForFiles(string path, string filetype, vector<string>& jsonArray);
 public:
     static string currentPath;
     static JsonData jsonData;
+    static string version;
     static void init(string args[]);
     static void _help(string args[]);
     static void _new(string args[]);
