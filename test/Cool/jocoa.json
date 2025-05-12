@@ -1,0 +1,12 @@
+{
+	"name": "Cool",
+	"type": "library",
+	"package": "net.Kai.Cool",
+	"sourceFiles": [
+		"./src/net/Kai/Cool/library/Library.java"
+	],
+	"dependencies": [
+		
+	],
+	"natives": "lib/natives"
+}

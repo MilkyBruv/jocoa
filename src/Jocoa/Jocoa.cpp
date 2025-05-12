@@ -27,14 +27,18 @@ void Jocoa::createDirectory(string path)
     {
         currentFolder += "/" + folder;
 
-        // Try create directory
-        if (fs::create_directory(currentPath + currentFolder))
+        // Only create if folder doesn't exist
+        if (!fs::is_directory(currentPath + currentFolder))
         {
-            Logger::info("Created \t ./" + path);
-        }
-        else
-        {
-            Logger::error("Failed to create \t ./" + path);
+            // Try create directory
+            if (fs::create_directory(currentPath + currentFolder))
+            {
+                Logger::info("Created \t" + currentPath + currentFolder);
+            }
+            else
+            {
+                Logger::error("Failed to create \t" + currentPath + currentFolder);
+            }
         }
     }
 }
@@ -160,8 +164,9 @@ void Jocoa::_help(string args[])
     "\033[39mCommands:\n"
     "\thelp - Displays this command\n"
     "\tnew - Creates new project\n"
-    "\trun - Compiles current project to .class files and runs as a project\n"
-    "\tpackage \033[36m<run>\033[39m - Compiles current project to .class files and packages it to a single .jar\n"
+    "\trun \033[36mnosearch\033[39m - Compiles current project to .class files and runs as a project\n"
+    "\t\t\033[36mnosearch\033[39m - Runs the current project without searching for new libraries and files and adding them to the jocoa.json file\n"
+    "\tpackage \033[36mrun\033[39m - Compiles current project to .class files and packages it to a single .jar\n"
     "\t\t\033[36mrun\033[39m - Runs the .jar file after packing it\n"
     "\tsearch - Updates current jocoa.json file with all source files and dependency files in the current project\n"
     "\tclean - Cleans current project of compilation files" << endl;
@@ -229,30 +234,35 @@ void Jocoa::_new(string args[])
     vector<string> packageTokens = split(packagePath, "/");
 
     // Create file and folders
-    createDirectory(name + "/src" + packagePath);
-    if (typeStr[0] == 'r') { createDirectory(name + "/src" + packagePath + "/main"); }
+    createDirectory(name + "/src/" + packagePath);
+    if (typeStr[0] == 'r') { createDirectory(name + "/src/" + packagePath + "/main"); }
     createDirectory(name + "/lib/natives");
     createDirectory(name + "/res");
     createDirectory(name + "/bin");
     createFile(name + "/jocoa.json");
-    writeFile(name + "/jocoa.json", "{\n\t\"name\": \"" + name + "\",\n\t\"type\": \"" + typeStr + "\",\n\t\"package\": \"" + package + "\",\n\t\"sourceFiles\": [\n\t\t\"src/" + packagePath + "/main/Main.java\"\n\t],\n\t\"dependencies\": [\n\t\t\n\t],\n\t\"natives\": \"lib/natives\"\n}");
-    cout << "{\n\t\"name\": \"" + name + "\",\n\t\"type\": \"" + typeStr + "\",\n\t\"package\": \"" + package + "\",\n\t\"sourceFiles\": [\n\t\t\"src/" + packagePath + "/main/Main.java\"\n\t],\n\t\"dependencies\": [\n\t\t\n\t],\n\t\"natives\": \"lib/natives\"\n}" << endl;
 
     if (typeStr[0] == 'r')
     {
+        writeFile(name + "/jocoa.json", "{\n\t\"name\": \"" + name + "\",\n\t\"type\": \"" + typeStr + "\",\n\t\"package\": \"" + package + "\",\n\t\"sourceFiles\": [\n\t\t\"./src/" + packagePath + "/main/Main.java\"\n\t],\n\t\"dependencies\": [\n\t\t\n\t],\n\t\"natives\": \"lib/natives\"\n}");
         createFile(name + "/src/" + packagePath + "/main/Main.java");
         writeFile(name + "/src/" + packagePath + "/main/Main.java", "package " + package + ".main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello World!\");\n\n\t}\n\n}");
     }
     else if (typeStr[0] == 'l')
     {
-        // Create test stuff for library project type
-        createDirectory(name + "/test/" + packagePath + "Test/main");
-        createFile(name + "/test/" + packagePath + "Test/main/Main.java");
-        writeFile(name + "/test/" + packagePath + "Test/main/Main.java", "package " + package + ".main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello World!\");\n\n\t}\n\n}");
-        
+        // Create and package main library
+        writeFile(name + "/jocoa.json", "{\n\t\"name\": \"" + name + "\",\n\t\"type\": \"" + typeStr + "\",\n\t\"package\": \"" + package + "\",\n\t\"sourceFiles\": [\n\t\t\"./src/" + packagePath + "/library/Library.java\"\n\t],\n\t\"dependencies\": [\n\t\t\n\t],\n\t\"natives\": \"lib/natives\"\n}");
         createDirectory(name + "/src/" + packagePath + "/library");
         createFile(name + "/src/" + packagePath + "/library/Library.java");
         writeFile(name + "/src/" + packagePath + "/library/Library.java", "package " + package + ".library;\n\npublic class Library {\n\n\tpublic static void test() {\n\n\t\tSystem.out.println(\"Hello World from Library!\");\n\n\t}\n\n}");
+
+        // Create test stuff for library project type
+        createDirectory(name + "/test/" + packagePath + "Test/main");
+        createFile(name + "/test/" + packagePath + "Test/main/Main.java");
+        writeFile(name + "/test/" + packagePath + "Test/main/Main.java", "package " + package + ".main;\n\nimport " + package + ".library.Library;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello World!\");\n\n\t}\n\n}");
+
+        // Package in new project mode
+        args[0] = "new";
+        _package(args);
     }
 }
 
@@ -317,7 +327,7 @@ void Jocoa::_search(string args[])
 
 void Jocoa::_run(string args[])
 {
-    Jocoa::_search(args);
+    if (strcmp(args[2].c_str(), "nosearch") != 0) { Jocoa::_search(args); } // Check if should search before running
 
     if (!fs::is_regular_file(currentPath + "/jocoa.json"))
     {
@@ -392,7 +402,8 @@ void Jocoa::_package(string args[])
     string jar = "jar cf";
     string java;
 
-    _search(args);
+    // Check if not in new project mode
+    if (args[0][0] != 'n') { _search(args); }
 
     // If runnable compile to jar with main method
     if (jsonData.type[0] == 'r')
