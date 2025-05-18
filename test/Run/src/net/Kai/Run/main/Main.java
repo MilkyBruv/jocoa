@@ -1,6 +1,4 @@
-package net.Kai.Cool.main;
-
-import net.Kai.Cool.library.Library;
+package net.Kai.Run.main;
 
 public class Main {
 

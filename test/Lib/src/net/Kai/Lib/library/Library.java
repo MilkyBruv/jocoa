@@ -1,4 +1,4 @@
-package net.Kai.Cool.library;
+package net.Kai.Lib.library;
 
 public class Library {
 

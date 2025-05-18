@@ -3,10 +3,10 @@
 	"type": "library",
 	"package": "net.Kai.Lib",
 	"sourceFiles": [
-		"./src/main/java/net/Kai/Lib/utils/Utils.java"
+		"./src/net/Kai/Lib/library/Library.java"
 	],
 	"dependencies": [
-
+		
 	],
 	"natives": "lib/natives"
 }
