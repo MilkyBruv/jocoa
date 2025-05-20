@@ -1,9 +1,7 @@
 #ifndef LOGGER_HPP
 #define LOGGER_HPP
 
-#include <string>
-
-using std::string;
+#include "./../Macros/Macros.hpp"
 
 class Logger
 {

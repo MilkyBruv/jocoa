@@ -50,7 +50,7 @@ void FileManager::clearDirectory(string path)
         for (const fs::path file : fs::directory_iterator(currentPath + "/bin"))
         {
             fs::remove_all(file);
-            Logger::info("Removed " + simplifyPathNew(file.string()));
+            Logger::info("Removed " + file.string());
         }
     }
 }
@@ -61,7 +61,7 @@ void FileManager::createFile(string path)
     if (!fs::is_regular_file(currentPath + "/" + path))
     {
         std::ofstream file(currentPath + "/" + path);
-        Logger::info("Created " + simplifyPathNew(path));
+        Logger::info("Created " + path);
     }
 }
 
@@ -76,7 +76,7 @@ void FileManager::writeFile(string path, string contents)
     file << contents;
     file.close();
 
-    Logger::info("Wrote to " + simplifyPathNew(currentPath + "/" + path));
+    Logger::info("Wrote to " + path);
 }
 
 void FileManager::clearFile(string path)
@@ -86,7 +86,7 @@ void FileManager::clearFile(string path)
     fs::resize_file(currentPath + "/" + path, 0);
     file.close();
 
-    Logger::info("Cleared " + simplifyPathNew(currentPath + "/" + path));
+    Logger::info("Cleared " + path);
 }
 
 void FileManager::standardisePath(string& path)
@@ -140,7 +140,7 @@ void FileManager::searchForFiles(string path, string filetype, vector<string>& j
 {
     string currentFile;
 
-    Logger::info("Searching " + simplifyPathNew(currentPath + "/" + path));
+    Logger::info("Searching " + path);
 
     // Search {path} and check for files with the type of {filetype}, then add them to {jsonArray}
     for (const fs::directory_entry& file : fs::recursive_directory_iterator(currentPath + "/" + path))

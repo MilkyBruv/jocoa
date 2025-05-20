@@ -2,22 +2,9 @@
 #define JOCOA_HPP
 
 #include "./../Log/Logger.hpp"
-#include <string>
-#include <vector>
-#include <iostream>
-
-#if defined(_WIN32) || defined(_WIN64)
-    #define CP_SEPARATOR ';'
-    #include <windows.h>
-    #include <Lmcons.h>
-    #include <codecvt>
-#elif defined(__linux__) || defined(_APPLE__) || defined(__unix__)
-    #define CP_SEPARATOR ':'
-    #include <unistd.h>
-#endif
-
-using std::string;
-using std::vector;
+#include "./../File/FileManager.hpp"
+#include "./../Json/JsonManager.hpp"
+#include "./../Command/CommandBuilder.hpp"
 
 class Jocoa
 {
