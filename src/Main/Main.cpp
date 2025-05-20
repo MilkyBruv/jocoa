@@ -1,10 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <string.h>
 #include "./../Jocoa/Jocoa.hpp"
-
-using std::string;
 
 int main(int argc, char const *argv[])
 {
@@ -24,23 +18,27 @@ int main(int argc, char const *argv[])
     // Detect command
     if (argc >= 2)
     {
-        if (strcmp(args[1].c_str(), "new") == 0)
+        if (Utils::stringCompare(args[1], "new"))
         {
             Jocoa::_new(args);
         }
-        else if (strcmp(args[1].c_str(), "run") == 0)
+        else if (Utils::stringCompare(args[1], "run"))
         {
             Jocoa::_run(args);
         }
-        else if (strcmp(args[1].c_str(), "search") == 0)
+        else if (Utils::stringCompare(args[1], "search"))
         {
             Jocoa::_search(args);
         }
-        else if (strcmp(args[1].c_str(), "package") == 0)
+        else if (Utils::stringCompare(args[1], "package"))
         {
             Jocoa::_package(args);
         }
-        else if (strcmp(args[1].c_str(), "clean") == 0)
+        else if (Utils::stringCompare(args[1], "build"))
+        {
+            Jocoa::_build(args);
+        }
+        else if (Utils::stringCompare(args[1], "clean"))
         {
             Jocoa::_clean(args);
         }

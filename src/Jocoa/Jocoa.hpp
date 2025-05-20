@@ -17,6 +17,7 @@ public:
     static void _run(string args[]);
     static void _clean(string args[]);
     static void _package(string args[]);
+    static void _build(string args[]);
 };
 
 #endif

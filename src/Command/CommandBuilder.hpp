@@ -5,18 +5,29 @@
 
 class CommandBuiler
 {
+private:
+    static void initFATJar();
 public:
-    static string javacRaw(vector<string> sourceFiles, vector<string> dependencies);
-    static string javacJson(JsonData data);
+    static string buildClassRaw(vector<string> sourceFiles, vector<string> dependencies);
+    static string buildClassJson(JsonData data);
 
-    static string javaRaw(vector<string> sourceFiles, vector<string> dependencies, string packagePath);
-    static string javaJson(JsonData data);
+    static string runClassRaw(vector<string> sourceFiles, vector<string> dependencies, string packagePath);
+    static string runClassJson(JsonData data);
 
     static string runJarRaw(string name, string packagePath);
     static string runJarJson(JsonData data);
-    
-    static string buildJarRaw(string name, string packagePath);
-    static string buildJarJson(JsonData data);
+
+    static string buildRunnableJarRaw(string name, string package);
+    static string buildRunnableJarJson(JsonData data);
+
+    static string buildLibraryJarRaw(string name);
+    static string buildLibraryJarJson(JsonData data);
+
+    static string buildFATRunnableJarRaw(string name, string package, vector<string> dependencies);
+    static string buildFATRunnableJarJson(JsonData data);
+
+    static string buildFATLibraryJarRaw(string name, vector<string> dependencies);
+    static string buildFATLibraryJarJson(JsonData data);
 };
 
 #endif

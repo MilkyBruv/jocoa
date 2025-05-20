@@ -1,4 +1,5 @@
 #include "./Jocoa.hpp"
+#include "Jocoa.hpp"
 
 namespace fs = std::filesystem;
 using std::cout;
@@ -31,14 +32,24 @@ void Jocoa::_help(string args[])
     "| |_| | (_) | (_| (_) | (_| |\n"
     " \\___/ \\___/ \\___\\___/ \\__,_|\t\033[36mgithub.com/MilkyBruv 2025\n\n"
     "\033[39mCommands:\n"
+
     "\thelp - Displays this command\n"
+
     "\tnew - Creates new project\n"
-    "\trun \033[36mno-search\033[39m - Compiles current project to .class files and runs as a project\n"
-    "\t\t\033[36mno-search\033[39m - Runs the current project without searching for new libraries or source files and adding them to the jocoa.json file\n"
-    "\tpackage \033[36mrun no-search\033[39m - Compiles current project to .class files and packages it to a single .jar\n"
-    "\t\t\033[36mrun\033[39m - Runs the .jar file after packing it\n"
-    "\t\t\033[36mno-search\033[39m - Runs the current project without searching for new libraries or source files and adding them to the jocoa.json file\n"
+
+    "\trun \033[36m-no-search\033[39m - Compiles current project to .class files and runs as a project\n"
+    "\t\t\033[36m-no-search\033[39m - Runs the current project without searching for new libraries or source files and adding them to the jocoa.json file\n"
+
+    "\tbuild \033[36m-fat -no-search\033[39m - Compiles current project to .class files and runs as a project\n"
+    "\t\t\033[36m-fat\033[39m - If using dependencies in a project, this will build a FAT .jar rather than a normal .jar (compiles everything into one without requiring the dependencies)\n"
+    "\t\t\033[36m-no-search\033[39m - Runs the current project without searching for new libraries or source files and adding them to the jocoa.json file\n"
+
+    "\tpackage \033[36m-run -no-search\033[39m - Compiles current project to .class files and packages it to a single .jar\n"
+    "\t\t\033[36m-run\033[39m - Runs the .jar file after packing it\n"
+    "\t\t\033[36m-no-search\033[39m - Runs the current project without searching for new libraries or source files and adding them to the jocoa.json file\n"
+
     "\tsearch - Updates current jocoa.json file with all source files and dependency files in the current project\n"
+
     "\tclean - Cleans current project of compilation files" << endl;
 }
 
@@ -49,6 +60,7 @@ void Jocoa::_new(string args[])
     cout << "Enter options for new project (options marked with * are required)\n" << endl;
 
     // Project name
+
     cout << "*Project name: ";
     std::getline(cin, name);
     cout << endl;
@@ -99,14 +111,14 @@ void Jocoa::_new(string args[])
     FileManager::createDirectory(name + "/bin");
     FileManager::createFile(name + "/jocoa.json");
 
-    if (typeStr[0] == 'r')
+    if (Utils::stringCompare(JsonManager::jsonData.type, "runnable"))
     {
         FileManager::createDirectory(name + "/src/" + packagePath + "/main");
         FileManager::writeFile(name + "/jocoa.json", "{\n\t\"name\": \"" + name + "\",\n\t\"type\": \"" + typeStr + "\",\n\t\"package\": \"" + package + "\",\n\t\"sourceFiles\": [\n\t\t\"./src/" + packagePath + "/main/Main.java\"\n\t],\n\t\"dependencies\": [\n\t\t\n\t]\n}");
         FileManager::createFile(name + "/src/" + packagePath + "/main/Main.java");
         FileManager::writeFile(name + "/src/" + packagePath + "/main/Main.java", "package " + package + ".main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello World!\");\n\n\t}\n\n}");
     }
-    else if (typeStr[0] == 'l')
+    else if (Utils::stringCompare(JsonManager::jsonData.type, "library"))
     {
         // Create and package main library
         FileManager::writeFile(name + "/jocoa.json", "{\n\t\"name\": \"" + name + "\",\n\t\"type\": \"" + typeStr + "\",\n\t\"package\": \"" + package + "\",\n\t\"sourceFiles\": [\n\t\t\"./src/" + packagePath + "/library/Library.java\"\n\t],\n\t\"dependencies\": [\n\t\t\n\t],\n}");
@@ -172,14 +184,21 @@ void Jocoa::_run(string args[])
     if (Utils::stringCompare(JsonManager::jsonData.type, "runnable"))
     {   
         // Create commands from default source files and dependencies
-        javac = CommandBuiler::javacJson(JsonManager::jsonData);
-        java = CommandBuiler::javaJson(JsonManager::jsonData);
+        javac = CommandBuiler::buildClassJson(JsonManager::jsonData);
+        java = CommandBuiler::runClassJson(JsonManager::jsonData);
+
+        // Run and print commands
+        cout << javac << endl;
+        system(javac.c_str());
+        cout << java << endl;
+        system(java.c_str());
+
+        return;
     }
     if (Utils::stringCompare(JsonManager::jsonData.type, "library")) // If library then package src/main then run src/test
     {
         // Create commands from default source files and dependencies
-        javac = CommandBuiler::javacJson(JsonManager::jsonData);
-        java = CommandBuiler::javaJson(JsonManager::jsonData);
+        javac = CommandBuiler::buildClassJson(JsonManager::jsonData);
 
         // Get all source files from ./test
         vector<string> testSourceFiles;
@@ -191,21 +210,16 @@ void Jocoa::_run(string args[])
         testDependencies.push_back("./" + JsonManager::jsonData.name + ".jar");
 
         // Create commands from test source files and dependencies
-        javac = CommandBuiler::javacRaw(testSourceFiles, testDependencies);
-        java = CommandBuiler::javaRaw(testSourceFiles, testDependencies, JsonManager::jsonData.packagePath);
+        javac = CommandBuiler::buildClassRaw(testSourceFiles, testDependencies);
+        java = CommandBuiler::runClassRaw(testSourceFiles, testDependencies, JsonManager::jsonData.packagePath);
     }
-
-    // Run and print commands
-    cout << javac << endl;
-    system(javac.c_str());
-    cout << java << endl;
-    system(java.c_str());
 }
 
 void Jocoa::_clean(string args[])
 {
     // Clear bin folder
     FileManager::clearDirectory("bin");
+    Logger::info("Cleaned project");
 }
 
 void Jocoa::_package(string args[])
@@ -251,4 +265,9 @@ void Jocoa::_package(string args[])
             _run(args);
         }
     }
+}
+
+void Jocoa::_build(string args[])
+{
+    // 
 }

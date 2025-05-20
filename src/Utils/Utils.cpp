@@ -1,5 +1,5 @@
 #include "./Utils.hpp"
-#include "Utils.hpp"
+#include <string.h>
 
 vector<string> Utils::split(string str, string delimiter)
 {
