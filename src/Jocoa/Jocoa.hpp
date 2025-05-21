@@ -12,6 +12,7 @@ public:
     static string version;
     static void init(string args[]);
     static void _help(string args[]);
+    static void _info(string args[]);
     static void _new(string args[]);
     static void _search(string args[]);
     static void _run(string args[], size_t argc);

@@ -42,6 +42,10 @@ int main(int argc, char const *argv[])
         {
             Jocoa::_clean(args);
         }
+        else if (Utils::stringCompare(args[1], "info"))
+        {
+            Jocoa::_info(args);
+        }
         else
         {
             Jocoa::_help(args);

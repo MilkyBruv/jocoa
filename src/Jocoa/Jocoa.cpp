@@ -6,7 +6,7 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-string Jocoa::version = "v0.1.0";
+string Jocoa::version = "v0.1.1";
 
 void Jocoa::init(string args[])
 {
@@ -51,6 +51,31 @@ void Jocoa::_help(string args[])
     "\tsearch - Updates current jocoa.json file with all source files and dependency files in the current project\n"
 
     "\tclean - Cleans current project of compilation files" << endl;
+}
+
+void Jocoa::_info(string args[])
+{
+    cout << "Java Version: \033[36m";
+    system("java -version");
+    cout << "\n\033[39mJocoa Version: \033[36m" + version + "\033[39m\n"
+    "Project Name: \033[36m" + JsonManager::jsonData.name + "\033[39m\n"
+    "Project Type: \033[36m" + JsonManager::jsonData.type + "\033[39m\n"
+    "Project Package: \033[36m" + JsonManager::jsonData.package + "\033[39m\n"
+    "Project Source Files:\033[36m";
+    
+    for (const string& file : JsonManager::jsonData.sourceFiles)
+    {
+        cout << "\n \t" + file + ",";
+    }
+
+    cout << "\033[39m\nProject Dependencies:\033[36m\n";
+    
+    for (const string& dependency : JsonManager::jsonData.dependencies)
+    {
+        cout << "\n \t" + dependency + ",";
+    }
+
+    cout << "\033[39m" << endl;
 }
 
 void Jocoa::_new(string args[])

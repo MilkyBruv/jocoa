@@ -16,7 +16,7 @@ void Logger::info(string message)
 {
     if (verbose)
     {
-        cout << "INFO: " << message << endl;
+        cout << "\033[32mINFO: " << message << "\033[39m" << endl;
     }
 }
 
