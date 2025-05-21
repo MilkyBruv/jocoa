@@ -174,12 +174,12 @@ void Jocoa::_run(string args[], size_t argc)
         return;
     }
 
-    std::cout << argc << std::endl;
-
+    // Check if should search
     if (argc >= 3)
     {
         if (!Utils::stringCompare(args[2], "-no-search")) { Jocoa::_search(args); } // Check if should search before running
     }
+    else { Jocoa::_search(args); }
 
     string javac, java;
 

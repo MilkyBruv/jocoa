@@ -3,7 +3,8 @@
 	"type": "runnable",
 	"package": "net.Kai.run",
 	"sourceFiles": [
-		"./src/net/Kai/run/main/Main.java"
+		"./src/net/Kai/run/main/Main.java",
+		"./src/net/Kai/run/test/Test.java"
 	],
 	"dependencies": [
 
