@@ -80,9 +80,9 @@ string JsonManager::buildJsonFileRaw(string name, string type, string package, v
 string JsonManager::buildJsonFileJson(JsonData data)
 {
     string jsonFile = "{\n"
-    "\t\"name\": " + data.name + ",\n"
-    "\t\"type\": " + data.type + ",\n"
-    "\t\"package\": " + data.package + ",\n"
+    "\t\"name\": \"" + data.name + "\",\n"
+    "\t\"type\": \"" + data.type + "\",\n"
+    "\t\"package\": \"" + data.package + "\",\n"
     "\t\"sourceFiles\": [";
 
     // Only add if there's any source files

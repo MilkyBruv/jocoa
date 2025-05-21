@@ -32,7 +32,6 @@ public:
     static void clearDirectory(string path);
     static void createFile(string path);
     static void writeFile(string path, string contents);
-    static void clearFile(string path);
     static bool fileExists(string path);
     static void standardisePath(string& path);
     static void localisePath(string& path);

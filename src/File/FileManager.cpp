@@ -35,7 +35,7 @@ void FileManager::createDirectory(string path)
             }
             else
             {
-                Logger::error("Failed to create " + currentFolder + " as it already exists");
+                Logger::error("Skipping " + currentFolder + " as it already exists");
             }
         }
     }
@@ -61,6 +61,7 @@ void FileManager::createFile(string path)
     if (!fs::is_regular_file(currentPath + "/" + path))
     {
         std::ofstream file(currentPath + "/" + path);
+        file.close();
         Logger::info("Created " + path);
     }
 }
@@ -69,24 +70,17 @@ void FileManager::writeFile(string path, string contents)
 {
     // Create file if it doesn't exist and clear it
     createFile(path);
-    clearFile(path);
 
     // Write contents to file
     std::ofstream file(currentPath + "/" + path);
+
+    // Check for errors
+    if (!file) { std::cout << "wtf" << std::endl; }
+
     file << contents;
     file.close();
 
     Logger::info("Wrote to " + path);
-}
-
-void FileManager::clearFile(string path)
-{
-    // Resize file to 0 to clear/truncate it
-    std::ofstream file(currentPath + "/" + path);
-    fs::resize_file(currentPath + "/" + path, 0);
-    file.close();
-
-    Logger::info("Cleared " + path);
 }
 
 void FileManager::standardisePath(string& path)

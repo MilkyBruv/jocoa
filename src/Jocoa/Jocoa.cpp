@@ -111,14 +111,15 @@ void Jocoa::_new(string args[])
     FileManager::createDirectory(name + "/bin");
     FileManager::createFile(name + "/jocoa.json");
 
-    if (Utils::stringCompare(JsonManager::jsonData.type, "runnable"))
+    if (Utils::stringCompare(typeStr, "runnable"))
     {
+        cout << "runnable" << endl;
         FileManager::createDirectory(name + "/src/" + packagePath + "/main");
         FileManager::writeFile(name + "/jocoa.json", "{\n\t\"name\": \"" + name + "\",\n\t\"type\": \"" + typeStr + "\",\n\t\"package\": \"" + package + "\",\n\t\"sourceFiles\": [\n\t\t\"./src/" + packagePath + "/main/Main.java\"\n\t],\n\t\"dependencies\": [\n\t\t\n\t]\n}");
         FileManager::createFile(name + "/src/" + packagePath + "/main/Main.java");
         FileManager::writeFile(name + "/src/" + packagePath + "/main/Main.java", "package " + package + ".main;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello World!\");\n\n\t}\n\n}");
     }
-    else if (Utils::stringCompare(JsonManager::jsonData.type, "library"))
+    else if (Utils::stringCompare(typeStr, "library"))
     {
         // Create and package main library
         FileManager::writeFile(name + "/jocoa.json", "{\n\t\"name\": \"" + name + "\",\n\t\"type\": \"" + typeStr + "\",\n\t\"package\": \"" + package + "\",\n\t\"sourceFiles\": [\n\t\t\"./src/" + packagePath + "/library/Library.java\"\n\t],\n\t\"dependencies\": [\n\t\t\n\t],\n}");
@@ -134,7 +135,7 @@ void Jocoa::_new(string args[])
         // Package in new project mode
         args[0] = "internal_new";
         JsonManager::loadJsonData();
-        _package(args);
+        _package(args, 1);
     }
 }
 
@@ -165,7 +166,7 @@ void Jocoa::_search(string args[])
     JsonManager::loadJsonData();
 }
 
-void Jocoa::_run(string args[])
+void Jocoa::_run(string args[], size_t argc)
 {
     if (!FileManager::fileExists("jocoa.json"))
     {
@@ -173,7 +174,12 @@ void Jocoa::_run(string args[])
         return;
     }
 
-    if (!Utils::stringCompare(args[2], "no-search")) { Jocoa::_search(args); } // Check if should search before running
+    std::cout << argc << std::endl;
+
+    if (argc >= 3)
+    {
+        if (!Utils::stringCompare(args[2], "-no-search")) { Jocoa::_search(args); } // Check if should search before running
+    }
 
     string javac, java;
 
@@ -222,7 +228,7 @@ void Jocoa::_clean(string args[])
     Logger::info("Cleaned project");
 }
 
-void Jocoa::_package(string args[])
+void Jocoa::_package(string args[], size_t argc)
 {
     string jar = "jar cf";
     string java;
@@ -262,12 +268,12 @@ void Jocoa::_package(string args[])
         if (strcmp(args[2].c_str(), "run") == 0)
         {
             // Run test files with packaged .jar as a library
-            _run(args);
+            _run(args, argc);
         }
     }
 }
 
-void Jocoa::_build(string args[])
+void Jocoa::_build(string args[], size_t argc)
 {
     // 
 }

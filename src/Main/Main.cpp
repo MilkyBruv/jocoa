@@ -24,7 +24,7 @@ int main(int argc, char const *argv[])
         }
         else if (Utils::stringCompare(args[1], "run"))
         {
-            Jocoa::_run(args);
+            Jocoa::_run(args, argc);
         }
         else if (Utils::stringCompare(args[1], "search"))
         {
@@ -32,11 +32,11 @@ int main(int argc, char const *argv[])
         }
         else if (Utils::stringCompare(args[1], "package"))
         {
-            Jocoa::_package(args);
+            Jocoa::_package(args, argc);
         }
         else if (Utils::stringCompare(args[1], "build"))
         {
-            Jocoa::_build(args);
+            Jocoa::_build(args, argc);
         }
         else if (Utils::stringCompare(args[1], "clean"))
         {
