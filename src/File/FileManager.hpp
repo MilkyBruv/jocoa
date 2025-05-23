@@ -30,9 +30,10 @@ public:
     static void setCurrentPath();
     static void createDirectory(string path);
     static void clearDirectory(string path);
+    static void remove(string path);
     static void createFile(string path);
     static void writeFile(string path, string contents);
-    static bool fileExists(string path);
+    static bool exists(string path);
     static void standardisePath(string& path);
     static void localisePath(string& path);
     static void simplifyPath(string& path);

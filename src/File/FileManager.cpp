@@ -55,6 +55,16 @@ void FileManager::clearDirectory(string path)
     }
 }
 
+void FileManager::remove(string path)
+{
+    // Check if file / folder exists
+    if (exists("binf"))
+    {
+        fs::remove(currentPath + "/" + path);
+        Logger::info("Removed " + path);
+    }
+}
+
 void FileManager::createFile(string path)
 {
     // Create file if it doesn't exist
@@ -100,9 +110,9 @@ void FileManager::standardisePath(string& path)
     }
 }
 
-bool FileManager::fileExists(string path)
+bool FileManager::exists(string path)
 {
-    return fs::is_regular_file(currentPath + "/" + path);
+    return fs::is_regular_file(currentPath + "/" + path) || fs::is_directory(currentPath + "/" + path);
 }
 
 void FileManager::localisePath(string& path)

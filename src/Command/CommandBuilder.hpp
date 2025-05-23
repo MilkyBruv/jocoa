@@ -7,6 +7,7 @@ class CommandBuiler
 {
 private:
     static void initFATJar();
+    static void unpackDependencies(vector<string> dependencies);
 public:
     static string buildClassRaw(vector<string> sourceFiles, vector<string> dependencies);
     static string buildClassJson(JsonData data);

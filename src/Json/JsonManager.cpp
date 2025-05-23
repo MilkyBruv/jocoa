@@ -19,7 +19,7 @@ string JsonManager::packageToPackagePath(string package)
 void JsonManager::loadJsonData()
 {
     // Check if file exists
-    if (FileManager::fileExists("jocoa.json"))
+    if (FileManager::exists("jocoa.json"))
     {
         // Load json data from jocoa.json file
         std::fstream jsonFile(FileManager::currentPath + "/jocoa.json");

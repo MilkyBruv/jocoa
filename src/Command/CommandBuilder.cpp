@@ -6,6 +6,23 @@ void CommandBuiler::initFATJar()
     FileManager::createDirectory("binf");
 }
 
+void CommandBuiler::unpackDependencies(vector<string> dependencies)
+{
+    initFATJar();
+
+    string jar;
+
+    // Loop through each dependency in ./lib and unpack into .class files in ./binf
+    for (const string& dependency : dependencies)
+    {
+        jar = "cd binf && jar xf ../" + dependency + " && cd ..";
+        system(jar.c_str());
+    }
+
+    // Copy ./bin into ./binf
+    system("cp -r ./bin/* ./binf");
+}
+
 string CommandBuiler::buildClassRaw(vector<string> sourceFiles, vector<string> dependencies)
 {
     string javac = "javac -d ./bin -cp .";
@@ -94,8 +111,11 @@ string CommandBuiler::buildLibraryJarJson(JsonData data)
 
 string CommandBuiler::buildFATRunnableJarRaw(string name, string package, vector<string> dependencies)
 {
+    // Unpack dependencies
+    unpackDependencies(dependencies);
+
     // Build runnable jar with specified main class
-    string jar = "jar cfe " + name + ".jar " + package + ".main.Main -C ./bin .";
+    string jar = "jar cfe " + name + ".jar " + package + ".main.Main -C ./binf .";
 
     return jar;
 }
@@ -108,6 +128,9 @@ string CommandBuiler::buildFATRunnableJarJson(JsonData data)
 
 string CommandBuiler::buildFATLibraryJarRaw(string name, vector<string> dependencies)
 {
+    // Unpack dependencies
+    unpackDependencies(dependencies);
+
     // Build library jar with no main class
     string jar = "jar cf " + name + ".jar ./bin .";
 
