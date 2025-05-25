@@ -18,7 +18,7 @@ public:
     static string buildRunJarRaw(string name, string packagePath);
     static string buildRunJarJson(JsonData data);
 
-    static string buildRunnableJarRaw(string name, string package);
+    static string buildRunnableJarRaw(string name, string packagePath);
     static string buildRunnableJarJson(JsonData data);
 
     static string buildLibraryJarRaw(string name);

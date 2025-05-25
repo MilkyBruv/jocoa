@@ -6,7 +6,7 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-string Jocoa::version = "v0.1.1";
+string Jocoa::version = "v0.2.0";
 
 void Jocoa::init(string args[])
 {
@@ -44,6 +44,7 @@ void Jocoa::_help(string args[])
 
     "\tbuild - Compiles current project as .jar\n"
     "\t\t\033[36m-no-search\033[39m - Compiles without searching for new source files or dependencies\n"
+    "\t\t\033[36m-run\033[39m - Compiles project to .jar and executes it\n"
     "\t\t\033[36m-fat\033[39m - Compiles project and all dependencies into one .jar\n"
 
     "\tsearch - Searches for new source files or dependencies, and appends them to jocoa.json\n"
@@ -200,12 +201,22 @@ void Jocoa::_run(string args[], size_t argc)
         return;
     }
 
-    // Check if should search
-    if (argc >= 3)
+    // Check for -jar and -no-search arguments
+    bool jar, noSearch = false;
+
+    for (size_t i = 0; i < argc; i++)
     {
-        if (!Utils::stringCompare(args[2], "-no-search")) { Jocoa::_search(args); } // Check if should search before running
+        if (Utils::stringCompare(args[i], "-jar"))
+        {
+            jar = true;
+        }
+        else if (Utils::stringCompare(args[i], "-no-search"))
+        {
+            noSearch = true;
+        }
     }
-    else { Jocoa::_search(args); }
+
+    if (!noSearch) { Jocoa::_search(args); }
 
     string javac, java;
 
@@ -240,9 +251,9 @@ void Jocoa::_run(string args[], size_t argc)
 
     // Run and print commands
     cout << javac << endl;
-    system(javac.c_str());
+    system(javac.c_str()); // Compile to .class
     cout << java << endl;
-    system(java.c_str());
+    system(java.c_str()); // Run .class files
 }
 
 void Jocoa::_clean(string args[])
@@ -261,13 +272,17 @@ void Jocoa::_build(string args[], size_t argc)
     }
 
     // Check for -fat and -no-search arguments
-    bool fat, noSearch = false;
+    bool fat, run, noSearch = false;
 
     for (size_t i = 0; i < argc; i++)
     {
         if (Utils::stringCompare(args[i], "-fat"))
         {
             fat = true;
+        }
+        else if (Utils::stringCompare(args[i], "-run"))
+        {
+            run = true;
         }
         else if (Utils::stringCompare(args[i], "-no-search"))
         {
@@ -277,7 +292,7 @@ void Jocoa::_build(string args[], size_t argc)
 
     if (!noSearch) { Jocoa::_search(args); }
 
-    string javac, jar;
+    string javac, java, jar;
 
     // If runnable compile to jar with main method
     if (Utils::stringCompare(JsonManager::jsonData.type, "runnable"))
@@ -300,8 +315,19 @@ void Jocoa::_build(string args[], size_t argc)
         cout << jar << endl;
         system(jar.c_str()); // Compile to .jar
 
+        // If should run .jar
+        if (run)
+        {
+            java = CommandBuiler::buildRunJarJson(JsonManager::jsonData);
+            cout << java << endl;
+            system(java.c_str()); // Run .jar
+        }
+
         // Remove ./binf after creating the fat jar
         FileManager::remove("binf");
+
+        // Clear ./bin
+        FileManager::clearDirectory("bin");
     }
     if (Utils::stringCompare(JsonManager::jsonData.type, "library")) // If library then compile to jar without main method
     {
@@ -322,5 +348,32 @@ void Jocoa::_build(string args[], size_t argc)
         system(javac.c_str()); // Compile to .class
         cout << jar << endl;
         system(jar.c_str()); // Compile to .jar
+
+        // Clear ./bin
+        FileManager::clearDirectory("bin");
+
+        // Compile and run ./test
+        if (run)
+        {
+            vector<string> testSourceFiles, testDependencies;
+            FileManager::searchForFiles("test", "java", testSourceFiles);
+
+            // Copy default jocoa.json dependencies and add ./<name>.jar
+            testDependencies = JsonManager::jsonData.dependencies;
+            testDependencies.push_back("./" + JsonManager::jsonData.name + ".jar");
+
+            // Build javac and java command from ./test source files and ./lib dependencies with ./<name>.jar
+            javac = CommandBuiler::buildClassRaw(testSourceFiles, testDependencies);
+            string java = CommandBuiler::runClassRaw(testSourceFiles, testDependencies, 
+                JsonManager::jsonData.packagePath);
+
+            cout << javac << endl;
+            system(javac.c_str()); // Compile to .class
+            cout << java << endl;
+            system(java.c_str()); // Run .class files
+
+            // Clear ./bin
+            FileManager::clearDirectory("bin");
+        }
     }
 }
