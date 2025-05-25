@@ -17,7 +17,6 @@ public:
     static void _search(string args[]);
     static void _run(string args[], size_t argc);
     static void _clean(string args[]);
-    static void _package(string args[], size_t argc);
     static void _build(string args[], size_t argc);
 };
 

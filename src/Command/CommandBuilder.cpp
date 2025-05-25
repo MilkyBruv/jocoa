@@ -70,15 +70,15 @@ string CommandBuiler::runClassJson(JsonData data)
     return runClassRaw(data.sourceFiles, data.dependencies, data.packagePath);
 }
 
-string CommandBuiler::runJarRaw(string name, string packagePath)
+string CommandBuiler::buildRunJarRaw(string name, string package)
 {
-    return "test";
+    return "java -jar " + name + ".jar " + package + ".main.Main";
 }
 
-string CommandBuiler::runJarJson(JsonData data)
+string CommandBuiler::buildRunJarJson(JsonData data)
 {
     // Pass json data into raw method
-    return runJarRaw(data.name, data.packagePath);
+    return buildRunJarRaw(data.name, data.package);
 }
 
 string CommandBuiler::buildRunnableJarRaw(string name, string package)

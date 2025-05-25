@@ -42,12 +42,8 @@ void Jocoa::_help(string args[])
     "\trun - Compiles and executes current project\n"
     "\t\t\033[36m-no-search\033[39m - Compiles and executes without searching for new source files or dependencies\n"
 
-    "\tbuild - Compiles and exectures current project as .jar\n"
-    "\t\t\033[36m-no-search\033[39m - Compiles and executes without searching for new source files or dependencies\n"
-    "\t\t\033[36m-fat\033[39m - Compiles project and all dependencies into one .jar\n"
-
-    "\tpackage - Compiles project to .jar\n"
-    "\t\t\033[36m-no-search\033[39m - Compiles project without searching for new source files or dependencies\n"
+    "\tbuild - Compiles current project as .jar\n"
+    "\t\t\033[36m-no-search\033[39m - Compiles without searching for new source files or dependencies\n"
     "\t\t\033[36m-fat\033[39m - Compiles project and all dependencies into one .jar\n"
 
     "\tsearch - Searches for new source files or dependencies, and appends them to jocoa.json\n"
@@ -59,7 +55,7 @@ void Jocoa::_info(string args[])
 {
     cout << "Java Version: \033[36m";
     system("java -version");
-    cout << "\n\033[39mJocoa Version: \033[36m" + version + "\033[39m\n";
+    cout << "\033[39mJocoa Version: \033[36m" + version + "\033[39m\n";
 
     if (FileManager::exists("jocoa.json"))
     {
@@ -81,7 +77,7 @@ void Jocoa::_info(string args[])
         }
     }
 
-    cout << "\033[39m" << endl;
+    cout << "\033[39m";
 }
 
 void Jocoa::_new(string args[])
@@ -166,7 +162,6 @@ void Jocoa::_new(string args[])
         // Package in new project mode
         args[0] = "internal_new";
         JsonManager::loadJsonData();
-        _package(args, 1);
     }
 }
 
@@ -257,51 +252,6 @@ void Jocoa::_clean(string args[])
     Logger::info("Cleaned project");
 }
 
-void Jocoa::_package(string args[], size_t argc)
-{
-    string jar = "jar cf";
-    string java;
-
-    // Check if not in internal_new (new project) mode
-    if (Utils::stringCompare(args[0], "internal_new")) { _search(args); }
-
-    // If runnable compile to jar with main method
-    if (Utils::stringCompare(JsonManager::jsonData.type, "runnable"))
-    {
-        jar += "e " + JsonManager::jsonData.name + ".jar " + JsonManager::jsonData.package + ".main.Main -C ./bin .";
-
-        // Run command
-        cout << jar << endl;
-        system(jar.c_str());
-
-        // Run jar file if specified to
-        if (strcmp(args[2].c_str(), "run") == 0)
-        {
-            java = "java -jar ./" + JsonManager::jsonData.name + ".jar";
-
-            // Run command
-            cout << java << endl;
-            system(java.c_str());
-        }
-    }
-    if (Utils::stringCompare(JsonManager::jsonData.type, "library")) // If library then compile to jar without main method
-    {
-        // Compile to ./<name>.jar
-        jar += " ./" + JsonManager::jsonData.name + ".jar -C ./bin .";
-
-        // Run commands
-        cout << jar << endl;
-        system(jar.c_str());
-
-        // Run jar file if specified to
-        if (strcmp(args[2].c_str(), "run") == 0)
-        {
-            // Run test files with packaged .jar as a library
-            _run(args, argc);
-        }
-    }
-}
-
 void Jocoa::_build(string args[], size_t argc)
 {
     if (!FileManager::exists("jocoa.json"))
@@ -310,13 +260,7 @@ void Jocoa::_build(string args[], size_t argc)
         return;
     }
 
-    // Check if should search
-    if (argc >= 3)
-    {
-        if (!Utils::stringCompare(args[2], "-no-search")) {  } // Check if should search before running
-    }
-    else { Jocoa::_search(args); }
-
+    // Check for -fat and -no-search arguments
     bool fat, noSearch = false;
 
     for (size_t i = 0; i < argc; i++)
@@ -333,7 +277,7 @@ void Jocoa::_build(string args[], size_t argc)
 
     if (!noSearch) { Jocoa::_search(args); }
 
-    string java, jar;
+    string javac, jar;
 
     // If runnable compile to jar with main method
     if (Utils::stringCompare(JsonManager::jsonData.type, "runnable"))
@@ -347,11 +291,14 @@ void Jocoa::_build(string args[], size_t argc)
             jar = CommandBuiler::buildFATRunnableJarJson(JsonManager::jsonData);
         }
 
-        java = "java -jar ./" + JsonManager::jsonData.name + ".jar";
+        // Create commands from standard json data
+        javac = CommandBuiler::buildClassJson(JsonManager::jsonData);
 
-        // Run command
+        // Run commands
+        cout << javac << endl;
+        system(javac.c_str()); // Compile to .class
         cout << jar << endl;
-        system(jar.c_str());
+        system(jar.c_str()); // Compile to .jar
 
         // Remove ./binf after creating the fat jar
         FileManager::remove("binf");
@@ -359,17 +306,21 @@ void Jocoa::_build(string args[], size_t argc)
     if (Utils::stringCompare(JsonManager::jsonData.type, "library")) // If library then compile to jar without main method
     {
         // Compile to ./<name>.jar
-        jar += " ./" + JsonManager::jsonData.name + ".jar -C ./bin .";
+        if (!fat)
+        {
+            jar = CommandBuiler::buildLibraryJarJson(JsonManager::jsonData);
+        }
+        else if (fat)
+        {
+            jar = CommandBuiler::buildFATLibraryJarJson(JsonManager::jsonData);
+        }
+
+        javac = CommandBuiler::buildClassJson(JsonManager::jsonData);
 
         // Run commands
+        cout << javac << endl;
+        system(javac.c_str()); // Compile to .class
         cout << jar << endl;
-        system(jar.c_str());
-
-        // Run jar file if specified to
-        if (strcmp(args[2].c_str(), "run") == 0)
-        {
-            // Run test files with packaged .jar as a library
-            _run(args, argc);
-        }
+        system(jar.c_str()); // Compile to .jar
     }
 }

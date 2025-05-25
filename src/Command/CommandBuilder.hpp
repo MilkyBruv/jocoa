@@ -15,8 +15,8 @@ public:
     static string runClassRaw(vector<string> sourceFiles, vector<string> dependencies, string packagePath);
     static string runClassJson(JsonData data);
 
-    static string runJarRaw(string name, string packagePath);
-    static string runJarJson(JsonData data);
+    static string buildRunJarRaw(string name, string packagePath);
+    static string buildRunJarJson(JsonData data);
 
     static string buildRunnableJarRaw(string name, string package);
     static string buildRunnableJarJson(JsonData data);
