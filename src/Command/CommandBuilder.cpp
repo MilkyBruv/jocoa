@@ -34,7 +34,7 @@ string CommandBuiler::buildClassRaw(vector<string> sourceFiles, vector<string> d
     }
 
     // Add source files (.java)
-    for (string& file : JsonManager::jsonData.sourceFiles)
+    for (string& file : sourceFiles)
     {
         javac += " " + file;
     }

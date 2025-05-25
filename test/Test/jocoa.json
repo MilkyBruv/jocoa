@@ -1,0 +1,11 @@
+{
+	"name": "Test",
+	"type": "runnable",
+	"package": "net.Kai.Test",
+	"sourceFiles": [
+		"./src/net/Kai/Test/main/Main.java"
+	],
+	"dependencies": [
+
+	]
+}

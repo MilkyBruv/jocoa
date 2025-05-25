@@ -141,7 +141,6 @@ void Jocoa::_new(string args[])
 
     if (Utils::stringCompare(typeStr, "runnable"))
     {
-        cout << "runnable" << endl;
         FileManager::createDirectory(name + "/src/" + packagePath + "/main");
         FileManager::writeFile(name + "/jocoa.json", "{\n\t\"name\": \"" + name + "\",\n\t\"type\": \"" + typeStr + "\",\n\t\"package\": \"" + package + "\",\n\t\"sourceFiles\": [\n\t\t\"./src/" + packagePath + "/main/Main.java\"\n\t],\n\t\"dependencies\": [\n\t\t\n\t]\n}");
         FileManager::createFile(name + "/src/" + packagePath + "/main/Main.java");
@@ -150,7 +149,7 @@ void Jocoa::_new(string args[])
     else if (Utils::stringCompare(typeStr, "library"))
     {
         // Create and package main library
-        FileManager::writeFile(name + "/jocoa.json", "{\n\t\"name\": \"" + name + "\",\n\t\"type\": \"" + typeStr + "\",\n\t\"package\": \"" + package + "\",\n\t\"sourceFiles\": [\n\t\t\"./src/" + packagePath + "/library/Library.java\"\n\t],\n\t\"dependencies\": [\n\t\t\n\t],\n}");
+        FileManager::writeFile(name + "/jocoa.json", "{\n\t\"name\": \"" + name + "\",\n\t\"type\": \"" + typeStr + "\",\n\t\"package\": \"" + package + "\",\n\t\"sourceFiles\": [\n\t\t\"./src/" + packagePath + "/library/Library.java\"\n\t],\n\t\"dependencies\": [\n\t\t\n\t]\n}");
         FileManager::createDirectory(name + "/src/" + packagePath + "/library");
         FileManager::createFile(name + "/src/" + packagePath + "/library/Library.java");
         FileManager::writeFile(name + "/src/" + packagePath + "/library/Library.java", "package " + package + ".library;\n\npublic class Library {\n\n\tpublic static void test() {\n\n\t\tSystem.out.println(\"Hello World from Library!\");\n\n\t}\n\n}");
@@ -272,7 +271,7 @@ void Jocoa::_build(string args[], size_t argc)
     }
 
     // Check for -fat and -no-search arguments
-    bool fat, run, noSearch = false;
+    bool fat = false, run = false, noSearch = false;
 
     for (size_t i = 0; i < argc; i++)
     {
@@ -283,6 +282,7 @@ void Jocoa::_build(string args[], size_t argc)
         else if (Utils::stringCompare(args[i], "-run"))
         {
             run = true;
+            cout << "run" << endl;
         }
         else if (Utils::stringCompare(args[i], "-no-search"))
         {
@@ -329,7 +329,7 @@ void Jocoa::_build(string args[], size_t argc)
         // Clear ./bin
         FileManager::clearDirectory("bin");
     }
-    if (Utils::stringCompare(JsonManager::jsonData.type, "library")) // If library then compile to jar without main method
+    else if (Utils::stringCompare(JsonManager::jsonData.type, "library")) // If library then compile to jar without main method
     {
         // Compile to ./<name>.jar
         if (!fat)
@@ -350,13 +350,14 @@ void Jocoa::_build(string args[], size_t argc)
         system(jar.c_str()); // Compile to .jar
 
         // Clear ./bin
-        FileManager::clearDirectory("bin");
+        // FileManager::clearDirectory("bin");
 
         // Compile and run ./test
-        if (run)
+        if (run == true)
         {
+            cout << "run" << endl;
             vector<string> testSourceFiles, testDependencies;
-            FileManager::searchForFiles("test", "java", testSourceFiles);
+            FileManager::searchForFiles("test", ".java", testSourceFiles);
 
             // Copy default jocoa.json dependencies and add ./<name>.jar
             testDependencies = JsonManager::jsonData.dependencies;

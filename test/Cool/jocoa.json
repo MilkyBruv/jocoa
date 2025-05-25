@@ -1,0 +1,11 @@
+{
+	"name": "Cool",
+	"type": "library",
+	"package": "net.Cool",
+	"sourceFiles": [
+		"./src/net/Cool/library/Library.java"
+	],
+	"dependencies": [
+
+	]
+}

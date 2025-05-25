@@ -30,10 +30,6 @@ int main(int argc, char const *argv[])
         {
             Jocoa::_search(args);
         }
-        else if (Utils::stringCompare(args[1], "package"))
-        {
-            Jocoa::_package(args, argc);
-        }
         else if (Utils::stringCompare(args[1], "build"))
         {
             Jocoa::_build(args, argc);
