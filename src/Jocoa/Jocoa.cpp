@@ -201,7 +201,7 @@ void Jocoa::_run(string args[], size_t argc)
     }
 
     // Check for -jar and -no-search arguments
-    bool jar, noSearch = false;
+    bool jar = false, noSearch = false;
 
     for (size_t i = 0; i < argc; i++)
     {
@@ -282,7 +282,6 @@ void Jocoa::_build(string args[], size_t argc)
         else if (Utils::stringCompare(args[i], "-run"))
         {
             run = true;
-            cout << "run" << endl;
         }
         else if (Utils::stringCompare(args[i], "-no-search"))
         {
@@ -332,13 +331,13 @@ void Jocoa::_build(string args[], size_t argc)
     else if (Utils::stringCompare(JsonManager::jsonData.type, "library")) // If library then compile to jar without main method
     {
         // Compile to ./<name>.jar
-        if (!fat)
-        {
-            jar = CommandBuiler::buildLibraryJarJson(JsonManager::jsonData);
-        }
-        else if (fat)
+        if (fat)
         {
             jar = CommandBuiler::buildFATLibraryJarJson(JsonManager::jsonData);
+        }
+        else if (!fat)
+        {
+            jar = CommandBuiler::buildLibraryJarJson(JsonManager::jsonData);
         }
 
         javac = CommandBuiler::buildClassJson(JsonManager::jsonData);
@@ -350,19 +349,24 @@ void Jocoa::_build(string args[], size_t argc)
         system(jar.c_str()); // Compile to .jar
 
         // Clear ./bin
-        // FileManager::clearDirectory("bin");
+        FileManager::clearDirectory("bin");
 
         // Compile and run ./test
-        if (run == true)
+        if (run)
         {
             cout << "run" << endl;
             vector<string> testSourceFiles, testDependencies;
             FileManager::searchForFiles("test", ".java", testSourceFiles);
 
-            // Copy default jocoa.json dependencies and add ./<name>.jar
-            testDependencies = JsonManager::jsonData.dependencies;
+            // Only copy standard dependencies if not using FAT jar
+            if (!fat)
+            {
+                testDependencies = JsonManager::jsonData.dependencies;
+            }
+            
+            // Add ./<name>.jar
             testDependencies.push_back("./" + JsonManager::jsonData.name + ".jar");
-
+            
             // Build javac and java command from ./test source files and ./lib dependencies with ./<name>.jar
             javac = CommandBuiler::buildClassRaw(testSourceFiles, testDependencies);
             string java = CommandBuiler::runClassRaw(testSourceFiles, testDependencies, 
