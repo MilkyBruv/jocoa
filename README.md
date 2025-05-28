@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/MilkyBruv/jocoa/tree/main/res/jocoaTitle.png"/>
+  <img src="https://github.com/MilkyBruv/jocoa/blob/main/res/jocoaTitle.png"/>
 </p>
 
 <p align="center">
