@@ -2,6 +2,8 @@
   <img src="https://github.com/MilkyBruv/jocoa/blob/main/res/jocoaTitle.png"/>
 </p>
 
+<br/>
+
 <p align="center">
 <img alt="Static Badge" src="https://img.shields.io/badge/version-0.2.1-blue">
 <img alt="Static Badge" src="https://img.shields.io/badge/license-MIT-green">
