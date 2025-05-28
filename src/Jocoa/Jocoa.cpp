@@ -44,7 +44,6 @@ void Jocoa::_help(string args[])
 
     "\tbuild - Compiles current project as .jar\n"
     "\t\t\033[36m-no-search\033[39m - Compiles without searching for new source files or dependencies\n"
-    "\t\t\033[36m-run\033[39m - Compiles project to .jar and executes it\n"
     "\t\t\033[36m-fat\033[39m - Compiles project and all dependencies into one .jar\n"
 
     "\tsearch - Searches for new source files or dependencies, and appends them to jocoa.json\n"
@@ -157,10 +156,9 @@ void Jocoa::_new(string args[])
         // Create test stuff for library project type
         FileManager::createDirectory(name + "/test/" + packagePath + "Test/main");
         FileManager::createFile(name + "/test/" + packagePath + "Test/main/Main.java");
-        FileManager::writeFile(name + "/test/" + packagePath + "Test/main/Main.java", "package " + package + ".main;\n\nimport " + package + ".library.Library;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello World!\");\n\n\t}\n\n}");
+        FileManager::writeFile(name + "/test/" + packagePath + "Test/main/Main.java", "package " + package + "Test.main;\n\nimport " + package + ".library.Library;\n\npublic class Main {\n\n\tpublic static void main(String[] args) {\n\n\t\tSystem.out.println(\"Hello World!\");\n\n\t}\n\n}");
 
-        // Package in new project mode
-        args[0] = "internal_new";
+        // Load json data
         JsonManager::loadJsonData();
     }
 }
@@ -220,19 +218,41 @@ void Jocoa::_run(string args[], size_t argc)
     string javac, java;
 
     // Clear ./bin
-    _clean(args);
+    FileManager::clearDirectory("bin");
 
     // If runnable then just compile to class then run
     if (Utils::stringCompare(JsonManager::jsonData.type, "runnable"))
     {   
-        // Create commands from default source files and dependencies
-        javac = CommandBuiler::buildClassJson(JsonManager::jsonData);
-        java = CommandBuiler::runClassJson(JsonManager::jsonData);
+        if (jar) // If should execute .jar
+        {
+            if (FileManager::exists(JsonManager::jsonData.name + ".jar"))
+            {
+                // Create command to run .jar
+                java = CommandBuiler::buildRunJarJson(JsonManager::jsonData);
+            }
+            else // If the .jar doesn't exist, create it and then loop back to _run() to execute it
+            {
+                Logger::warn(".jar not detected, building then executing");
+
+                args[0] = "INTERNAL_BUILD_RUN";
+                _build(args, argc);
+            }
+        }
+        else if (!jar)
+        {
+            // Create commands from default source files and dependencies
+            javac = CommandBuiler::buildClassJson(JsonManager::jsonData);
+            java = CommandBuiler::runClassJson(JsonManager::jsonData);
+
+            // Run and print javac command
+            cout << javac << endl;
+            system(javac.c_str()); // Compile to .class
+        }
     }
     if (Utils::stringCompare(JsonManager::jsonData.type, "library")) // If library then package src/main then run src/test
     {
-        // Create commands from default source files and dependencies
-        javac = CommandBuiler::buildClassJson(JsonManager::jsonData);
+        args[0] = "INTERNAL_BUILD_LIB";
+        _build(args, argc);
 
         // Get all source files from ./test
         vector<string> testSourceFiles;
@@ -245,14 +265,19 @@ void Jocoa::_run(string args[], size_t argc)
 
         // Create commands from test source files and dependencies
         javac = CommandBuiler::buildClassRaw(testSourceFiles, testDependencies);
-        java = CommandBuiler::runClassRaw(testSourceFiles, testDependencies, JsonManager::jsonData.packagePath);
+
+        // Create package path for ./test source files
+        string testPackagePath = JsonManager::packageToPackagePath(JsonManager::jsonData.package + "Test");
+        java = CommandBuiler::runClassRaw(testSourceFiles, testDependencies, testPackagePath);
+
+        // Run and print javac command
+        cout << javac << endl;
+        system(javac.c_str()); // Compile to .class
     }
 
-    // Run and print commands
-    cout << javac << endl;
-    system(javac.c_str()); // Compile to .class
+    // Run and print java command
     cout << java << endl;
-    system(java.c_str()); // Run .class files
+    system(java.c_str()); // Run .class files / Run .jar file
 }
 
 void Jocoa::_clean(string args[])
@@ -271,17 +296,13 @@ void Jocoa::_build(string args[], size_t argc)
     }
 
     // Check for -fat and -no-search arguments
-    bool fat = false, run = false, noSearch = false;
+    bool fat = false, noSearch = false;
 
     for (size_t i = 0; i < argc; i++)
     {
         if (Utils::stringCompare(args[i], "-fat"))
         {
             fat = true;
-        }
-        else if (Utils::stringCompare(args[i], "-run"))
-        {
-            run = true;
         }
         else if (Utils::stringCompare(args[i], "-no-search"))
         {
@@ -296,89 +317,49 @@ void Jocoa::_build(string args[], size_t argc)
     // If runnable compile to jar with main method
     if (Utils::stringCompare(JsonManager::jsonData.type, "runnable"))
     {
-        if (!fat)
-        {
-            jar = CommandBuiler::buildRunnableJarJson(JsonManager::jsonData);
-        }
-        else if (fat)
+        if (fat)
         {
             jar = CommandBuiler::buildFATRunnableJarJson(JsonManager::jsonData);
+        }
+        else
+        {
+            jar = CommandBuiler::buildRunnableJarJson(JsonManager::jsonData);
         }
 
         // Create commands from standard json data
         javac = CommandBuiler::buildClassJson(JsonManager::jsonData);
-
-        // Run commands
-        cout << javac << endl;
-        system(javac.c_str()); // Compile to .class
-        cout << jar << endl;
-        system(jar.c_str()); // Compile to .jar
-
-        // If should run .jar
-        if (run)
-        {
-            java = CommandBuiler::buildRunJarJson(JsonManager::jsonData);
-            cout << java << endl;
-            system(java.c_str()); // Run .jar
-        }
-
-        // Remove ./binf after creating the fat jar
-        FileManager::remove("binf");
-
-        // Clear ./bin
-        FileManager::clearDirectory("bin");
     }
-    else if (Utils::stringCompare(JsonManager::jsonData.type, "library")) // If library then compile to jar without main method
+    else if (Utils::stringCompare(JsonManager::jsonData.type, "library") || 
+        Utils::stringCompare(args[0], "INTERNAL_BUILD_LIB")) // If library then compile to jar without main method
     {
         // Compile to ./<name>.jar
         if (fat)
         {
             jar = CommandBuiler::buildFATLibraryJarJson(JsonManager::jsonData);
         }
-        else if (!fat)
+        else
         {
             jar = CommandBuiler::buildLibraryJarJson(JsonManager::jsonData);
         }
 
         javac = CommandBuiler::buildClassJson(JsonManager::jsonData);
+    }
 
-        // Run commands
-        cout << javac << endl;
-        system(javac.c_str()); // Compile to .class
-        cout << jar << endl;
-        system(jar.c_str()); // Compile to .jar
+    // Run commands
+    cout << javac << endl;
+    system(javac.c_str()); // Compile to .class
+    cout << jar << endl;
+    system(jar.c_str()); // Compile to .jar
 
-        // Clear ./bin
-        FileManager::clearDirectory("bin");
+    // Remove ./binf after creating the fat jar
+    FileManager::remove("binf");
 
-        // Compile and run ./test
-        if (run)
-        {
-            cout << "run" << endl;
-            vector<string> testSourceFiles, testDependencies;
-            FileManager::searchForFiles("test", ".java", testSourceFiles);
+    // Clear ./bin
+    FileManager::clearDirectory("bin");
 
-            // Only copy standard dependencies if not using FAT jar
-            if (!fat)
-            {
-                testDependencies = JsonManager::jsonData.dependencies;
-            }
-            
-            // Add ./<name>.jar
-            testDependencies.push_back("./" + JsonManager::jsonData.name + ".jar");
-            
-            // Build javac and java command from ./test source files and ./lib dependencies with ./<name>.jar
-            javac = CommandBuiler::buildClassRaw(testSourceFiles, testDependencies);
-            string java = CommandBuiler::runClassRaw(testSourceFiles, testDependencies, 
-                JsonManager::jsonData.packagePath);
-
-            cout << javac << endl;
-            system(javac.c_str()); // Compile to .class
-            cout << java << endl;
-            system(java.c_str()); // Run .class files
-
-            // Clear ./bin
-            FileManager::clearDirectory("bin");
-        }
+    // Loop back to runnable from internal command usage
+    if (Utils::stringCompare(args[0], "INTERNAL_BUILD_RUN"))
+    {
+        _run(args, argc);
     }
 }

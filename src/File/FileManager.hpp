@@ -1,21 +1,8 @@
 #ifndef FILE_MANAGER_HPP
 #define FILE_MANAGER_HPP
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <filesystem>
+#include "./../Macros/Macros.hpp"
 #include <fstream>
-
-#if defined(_WIN32) || defined(_WIN64)
-    #define CP_SEPARATOR ';'
-    #include <windows.h>
-    #include <Lmcons.h>
-    #include <codecvt>
-#elif defined(__linux__) || defined(_APPLE__) || defined(__unix__)
-    #define CP_SEPARATOR ':'
-    #include <unistd.h>
-#endif
 
 using std::string;
 using std::vector;

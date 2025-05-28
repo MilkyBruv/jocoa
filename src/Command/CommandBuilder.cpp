@@ -25,13 +25,15 @@ void CommandBuiler::unpackDependencies(vector<string> dependencies)
 
 string CommandBuiler::buildClassRaw(vector<string> sourceFiles, vector<string> dependencies)
 {
-    string javac = "javac -d ./bin -cp .";
+    string javac = "javac -d ./bin -cp \".";
 
     // Add dependencies (.jar files)
     for (string& dependency : dependencies)
     {
         javac += CP_SEPARATOR + dependency;
     }
+
+    javac += "\"";
 
     // Add source files (.java)
     for (string& file : sourceFiles)
@@ -50,13 +52,15 @@ string CommandBuiler::buildClassJson(JsonData data)
 
 string CommandBuiler::runClassRaw(vector<string> sourceFiles, vector<string> dependencies, string packagePath)
 {
-    string java = string("java -cp .") + CP_SEPARATOR + "./bin"; // Have to use string() else char* + char doesn't work
+    string java = string("java -cp \".") + CP_SEPARATOR + "./bin"; // Have to use string() else char* + char doesn't work
 
     // Add dependencies (.jar files)
     for (string& dependency : dependencies)
     {
         java += CP_SEPARATOR + dependency;
     }
+
+    java += "\"";
 
     // Add natives path
     java += " -Djava.library.path=./lib/natives " + packagePath + "/main/Main";
@@ -98,7 +102,7 @@ string CommandBuiler::buildRunnableJarJson(JsonData data)
 string CommandBuiler::buildLibraryJarRaw(string name)
 {
     // Build library jar with no main class
-    string jar = "jar cf " + name + ".jar ./bin .";
+    string jar = "jar cf " + name + ".jar -C ./bin .";
 
     return jar;
 }
