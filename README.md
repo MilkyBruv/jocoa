@@ -39,6 +39,17 @@ Jocoa aims to fill the need of a simple, lightweight, yet reliable project manag
 - `search` - Searches for new source files or dependencies, and appends them to `jocoa.json`
 - `clean` - Cleans current project of compilation files
 
+## Quick Start
+
+Visit the [installation guide](https://github.com/MilkyBruv/jocoa?tab=readme-ov-file#installation-guide), then proceed.
+
+```
+jocoa new
+jocoa run
+```
+
+And that's it!
+
 ## Example Project
 
 ### jocoa.json
