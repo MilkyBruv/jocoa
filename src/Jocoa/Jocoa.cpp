@@ -6,7 +6,7 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-string Jocoa::version = "v0.2.0";
+string Jocoa::version = "v0.2.1";
 
 void Jocoa::init(string args[])
 {
