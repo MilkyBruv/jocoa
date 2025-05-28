@@ -1,0 +1,11 @@
+{
+	"name": "BasicProject",
+	"type": "runnable",
+	"package": "net.User.BasicProject",
+	"sourceFiles": [
+		"./src/net/User/BasicProject/main/Main.java"
+	],
+	"dependencies": [
+		
+	]
+}

@@ -1,5 +1,4 @@
 #include "./JsonManager.hpp"
-#include "JsonManager.hpp"
 
 JsonData JsonManager::jsonData;
 

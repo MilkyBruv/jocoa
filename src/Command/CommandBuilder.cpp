@@ -1,5 +1,4 @@
 #include "./CommandBuilder.hpp"
-#include "CommandBuilder.hpp"
 
 void CommandBuiler::initFATJar()
 {

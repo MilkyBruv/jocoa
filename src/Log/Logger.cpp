@@ -1,4 +1,4 @@
-#include "Logger.hpp"
+#include "./Logger.hpp"
 #include <iostream>
 
 using std::cout;

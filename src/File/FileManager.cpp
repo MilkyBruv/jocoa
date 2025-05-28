@@ -1,7 +1,6 @@
 #include "./FileManager.hpp"
 #include "./../Utils/Utils.hpp"
 #include "./../Log/Logger.hpp"
-#include "FileManager.hpp"
 
 string FileManager::newPath;
 string FileManager::currentPath;

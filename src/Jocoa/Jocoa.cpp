@@ -1,5 +1,4 @@
 #include "./Jocoa.hpp"
-#include "Jocoa.hpp"
 
 namespace fs = std::filesystem;
 using std::cout;
