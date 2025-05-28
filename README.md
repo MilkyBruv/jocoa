@@ -27,7 +27,19 @@ Jocoa aims to fill the need of a simple, lightweight, yet reliable project manag
 - Easily adapatable for existing projects using other project management tools
 - Releases for Windows and Linux, with only the need of G++ or Clang++ to setup, no CMake.
 
-## Example
+## Commands
+- `help` - Displays information on how to use Jocoa
+- `new` - Creates new Jocoa project
+- `info` - Displays current project and system information
+- `run` - Compiles and executes current project
+    - `-no-search` - Compiles and executes without searching for new source files or dependencies
+- `build` - Compiles current project as .jar
+    - `-no-search` - Compiles without searching for new source files or dependencies
+    - `-fat` - Compiles project and all dependencies into one .jar
+- `search` - Searches for new source files or dependencies, and appends them to `jocoa.json`
+- `clean` - Cleans current project of compilation files
+
+## Example Project
 
 ### jocoa.json
 
@@ -78,7 +90,7 @@ src
                     Main.java
 ```
 
-[Click here]() for more examples.
+[Click here](https://github.com/MilkyBruv/jocoa/tree/main/examples) for examples.
 
 ## Installation Guide
 
