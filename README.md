@@ -121,7 +121,7 @@ $ sudo apt-get install clang
 #### Cloning and compiling
 ```
 $ git clone https://github.com/MilkyBruv/jocoa
-cd jocoa
+&& cd jocoa
 ```
 For G++
 ```
