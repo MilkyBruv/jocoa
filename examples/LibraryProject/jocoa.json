@@ -1,0 +1,11 @@
+{
+	"name": "LibraryProject",
+	"type": "library",
+	"package": "net.user.LibraryProject",
+	"sourceFiles": [
+		"./src/net/user/LibraryProject/library/Library.java"
+	],
+	"dependencies": [
+
+	]
+}

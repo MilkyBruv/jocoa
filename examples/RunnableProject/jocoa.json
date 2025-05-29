@@ -1,0 +1,12 @@
+{
+	"name": "RunnableProject",
+	"type": "runnable",
+	"package": "net.user.RunnableProject",
+	"sourceFiles": [
+		"./src/net/user/RunnableProject/test/Test.java",
+		"./src/net/user/RunnableProject/main/Main.java"
+	],
+	"dependencies": [
+
+	]
+}
