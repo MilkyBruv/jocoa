@@ -20,24 +20,24 @@ Jocoa aims to fill the need of a simple, lightweight, yet reliable project manag
 
 ## Features
 
-- Quick and easy to install
-- Beginner-friendly and easy to use
-- Relies on one single, small JSON file
-- Lightweight and simple
-- Easily adapatable for existing projects using other project management tools
+- Quick and easy to install.
+- Very Beginner-friendly.
+- Relies on one single, small JSON file.
+- Lightweight and simple.
+- Easily adapatable for existing projects using other project management tools.
 - Releases for Windows and Linux, with only the need of G++ or Clang++ to setup, no CMake.
 
 ## Commands
-- `help` - Displays information on how to use Jocoa
-- `new` - Creates new Jocoa project
-- `info` - Displays current project and system information
-- `run` - Compiles and executes current project
-    - `-no-search` - Compiles and executes without searching for new source files or dependencies
-- `build` - Compiles current project as .jar
-    - `-no-search` - Compiles without searching for new source files or dependencies
-    - `-fat` - Compiles project and all dependencies into one .jar
-- `search` - Searches for new source files or dependencies, and appends them to `jocoa.json`
-- `clean` - Cleans current project of compilation files
+- `help` - Displays information on how to use Jocoa.
+- `new` - Creates new Jocoa project.
+- `info` - Displays current project and system information.
+- `run` - Compiles and executes current project.
+    - `-no-search` - Compiles and executes without searching for new source files or dependencies.
+- `build` - Compiles current project as .jar.
+    - `-no-search` - Compiles without searching for new source files or dependencies.
+    - `-fat` - Compiles project and all dependencies into one .jar.
+- `search` - Searches for new source files or dependencies, and appends them to `jocoa.json`.
+- `clean` - Cleans current project of compilation files.
 
 ## Quick Start
 
@@ -105,7 +105,7 @@ src
 
 ## Installation Guide
 
-Installation for both Linux and Windows is very similar, simply install G++ or Clang++, clone the repository, then compile the project with the Makefile
+Installation for both Linux and Windows is very similar, simply install G++ or Clang++, clone the repository, then compile the project with the Makefile.
 
 ### Linux
 
@@ -118,7 +118,7 @@ Or
 $ sudo apt-get install clang
 ```
 
-Cloning and compiling
+#### Cloning and compiling
 ```
 $ git clone https://github.com/MilkyBruv/jocoa
 cd jocoa
@@ -138,15 +138,16 @@ $ make clinux
 
 Install G++ and/or Clang++ with [MinGW MSYS2](https://www.msys2.org/)
 
+#### Cloning and Compiling
 ```
-> git clone https://github.com/MilkyBruv/jocoa
-cd jocoa
+C:/> git clone https://github.com/MilkyBruv/jocoa
+&& cd jocoa
 ```
 For G++
 ```
-$ make gwin
+C:/jocoa/> make gwin
 ```
 Or for Clang++
 ```
-$ make cwin
+C:/jocoa/> make cwin
 ```
