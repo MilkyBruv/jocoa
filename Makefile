@@ -25,19 +25,3 @@ glinux:
 clinux:
 	clang++ $(COMP_ARGS_LINUX)
 	sudo mv jocoa /usr/local/bin
-
-test:
-	g++ $(COMP_ARGS_LINUX)
-	./jocoa test.json
-
-gwin-test:
-	g++ $(COMP_ARGS_WIN)
-
-cwin-test:
-	clang++ $(COMP_ARGS_WIN)
-
-glinux-test:
-	g++ $(COMP_ARGS_LINUX)
-
-clinux-test:
-	clang++ $(COMP_ARGS_LINUX)
