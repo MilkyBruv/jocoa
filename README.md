@@ -1,5 +1,8 @@
 <p align="center">
 <img alt="jocoa" src="https://github.com/MilkyBruv/jocoa/blob/stable/res/jocoaTitle.png">
+
+<br/>
+
 <img alt="Static Badge" src="https://img.shields.io/badge/version-0.2.1-blue">
 <img alt="Static Badge" src="https://img.shields.io/badge/license-MIT-green">
 <img alt="" src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black">
