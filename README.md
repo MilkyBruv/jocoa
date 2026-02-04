@@ -1,5 +1,5 @@
 <p align="center">
-<img alt="jocoa" src="https://github.com/MilkyBruv/jocoa/blob/stable/res/jocoaTitle.png">
+<img alt="jocoa" src="https://codeberg.org/MilkyBruv/jocoa/src/branch/stable/res/jocoaTitle.png">
 
 <br/>
 
@@ -15,8 +15,6 @@
 **Jocoa** is a Java project management tool for the command-line. It requires a single `jocoa.json` file to be preset to compile, execute, build, and package a Java project. This tool supports dependencies, natives, testing, runnable projects, and library projects in a simple way to aid developers create quick, lightweight projects with very little setup needed.
 
 Jocoa aims to fill the need of a simple, lightweight, yet reliable project management tool for Java, that requires very little adaptation for existing projects.
-
-**MIGRATED TO CODEBERG**: https://codeberg.org/MilkyBruv/jocoa
 
 ## Features
 
