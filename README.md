@@ -1,5 +1,5 @@
 <p align="center">
-<img alt="jocoa" src="https://codeberg.org/MilkyBruv/jocoa/src/branch/stable/res/jocoaTitle.png">
+<img alt="jocoa" src="https://codeberg.org/MilkyBruv/jocoa/raw/branch/stable/res/jocoaTitle.png">
 
 <br/>
 
