@@ -1,10 +1,4 @@
 <p align="center">
-  <img src="https://github.com/MilkyBruv/jocoa/blob/stable/res/jocoaTitle.png"/>
-</p>
-
-<br/>
-
-<p align="center">
 <img alt="Static Badge" src="https://img.shields.io/badge/version-0.2.1-blue">
 <img alt="Static Badge" src="https://img.shields.io/badge/license-MIT-green">
 <img alt="" src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black">
@@ -121,7 +115,7 @@ $ sudo apt-get install clang
 #### Cloning and compiling
 ```
 $ git clone https://github.com/MilkyBruv/jocoa
-&& cd jocoa
+cd jocoa
 ```
 For G++
 ```
