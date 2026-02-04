@@ -16,6 +16,8 @@
 
 Jocoa aims to fill the need of a simple, lightweight, yet reliable project management tool for Java, that requires very little adaptation for existing projects.
 
+**MIGRATED TO CODEBERG**: https://codeberg.org/MilkyBruv/jocoa
+
 ## Features
 
 - Quick and easy to install.
@@ -105,9 +107,12 @@ src
 
 Installation for both Linux and Windows is very similar, simply install G++ or Clang++, clone the repository, then compile the project with the Makefile.
 
-### Linux
+### Prerequisites
 
-#### Prerequisites
+#### Windows
+Install G++ and/or Clang++ with [MinGW MSYS2](https://www.msys2.org/)
+
+#### Linux
 ```
 $ sudo apt-get install g++
 ```
@@ -116,36 +121,47 @@ Or
 $ sudo apt-get install clang
 ```
 
-#### Cloning and compiling
+### Cloning
+
+Clone the repository to wherever you want, `C:/jocoa` and `/home` recommended
+
+```
+> git clone https://github.com/MilkyBruv/jocoa
+```
 ```
 $ git clone https://github.com/MilkyBruv/jocoa
-cd jocoa
-```
-For G++
-```
-$ make glinux
-```
-Or for Clang++
-```
-$ make clinux
 ```
 
-### Windows
+Note that you can clone jocoa to wherever you want, as the build files will be sent to the default path unless specified otherwise (`C:/jocoa` for windows and `/usr/local/bin` for linux).
 
-#### Prerequisites
+### Compiling for Windows
 
-Install G++ and/or Clang++ with [MinGW MSYS2](https://www.msys2.org/)
+Set the `CXX` and `WIN_DEST` or leave them as the default (`CXX=g++`, `WIN_DEST=C:/jocoa`)
 
-#### Cloning and Compiling
+**For default build using** `g++` **and installing at** `C:/jocoa`
 ```
-C:/> git clone https://github.com/MilkyBruv/jocoa
-&& cd jocoa
+C:/jocoa> make
 ```
-For G++
+
+**For custom build using** `clang++` **and installing at** `C:/your/path/jocoa`
 ```
-C:/jocoa/> make gwin
+C:/your/path/jocoa> make CXX=clang++ WIN_DEST="C:/your/path/jocoa"
 ```
-Or for Clang++
+
+**NOTE THAT YOU MUST USE EITHER** `/` **OR** `\\` **FOR** `WIN_DEST` **ELSE YOU WILL HAVE ISSUES**
+
+Then add `C:/jocoa` or `C:/your/path/jocoa` to PATH.
+
+### Compiling for Linux
+
+Set the `CXX` and `LINUX_DEST` or leave them as the default (`CXX=g++` , `WIN_DEST=/usr/local/bin`)
+
+**For default build using** `g++` **and installing at** `/usr/local/bin`
 ```
-C:/jocoa/> make cwin
+$ make
+```
+
+**For custom build using** `clang++` **and installing at** `/your/path/jocoa`
+```
+$ make CXX=clang++ LINUX_DEST="/your/path/jocoa"
 ```
