@@ -136,14 +136,14 @@ Note that you can clone jocoa to wherever you want, as the build files will be s
 
 Set the `CXX` and `WIN_DEST` or leave them as the default (`CXX=g++`, `WIN_DEST=C:/jocoa`)
 
-**For default build using** `g++` **and installing at** `C:/jocoa`
+**For default build at** `C:/jocoa`
 ```
 C:/jocoa> make
 ```
 
-**For custom build using** `clang++` **and installing at** `C:/your/path/jocoa`
+**For custom build at** `C:/your/path/jocoa`
 ```
-C:/your/path/jocoa> make CXX=clang++ WIN_DEST="C:/your/path/jocoa"
+C:/your/path/jocoa> make WIN_DEST="C:/your/path/jocoa"
 ```
 
 **NOTE THAT YOU MUST USE EITHER** `/` **OR** `\\` **FOR** `WIN_DEST` **ELSE YOU WILL HAVE ISSUES**
@@ -152,14 +152,20 @@ Then add `C:/jocoa` or `C:/your/path/jocoa` to PATH.
 
 ### Compiling for Linux
 
-Set the `CXX` and `LINUX_DEST` or leave them as the default (`CXX=g++` , `WIN_DEST=/usr/local/bin`)
+Set the `LINUX_DEST` or leave it as the default (`/usr/local/bin`)
 
-**For default build using** `g++` **and installing at** `/usr/local/bin`
+**For default build at** `/usr/local/bin`
 ```
 $ make
 ```
 
-**For custom build using** `clang++` **and installing at** `/your/path/jocoa`
+**For custom build at** `/your/path/jocoa`
 ```
-$ make CXX=clang++ LINUX_DEST="/your/path/jocoa"
+$ make LINUX_DEST="/your/path/jocoa"
 ```
+
+### Compiling Notes
+
+The Makefile has a few different arguments you can change to customize the build:
+- `CXX`: C++ Compiler, e.g. `g++` (default), `clang++`)
+- `SHOW_CXX_WARNINGS`: Can be turned on with `SHOW_CXX_WARNINGS=true` to show any warnings during compilation.

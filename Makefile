@@ -9,11 +9,6 @@ SHOW_CXX_WARNINGS := false
 all:
 	@echo CXX=$(CXX)
 	@echo SHOW_CXX_WARNINGS=$(SHOW_CXX_WARNINGS)
-ifeq ($(SHOW_CXX_WARNINGS),false)
-	@echo FALSE
-	$(eval COMP_ARGS_WIN += -w)
-	$(eval COMP_ARGS_LINUX += -w)
-endif
 
 ifeq ($(OS),Windows_NT)
 	@echo DEST=$(WIN_DEST)
@@ -30,11 +25,19 @@ initwin:
 
 win:
 	@make initwin
+ifeq ($(SHOW_CXX_WARNINGS),true)
 	@$(CXX) $(COMP_ARGS_WIN)
+else
+	@$(CXX) $(COMP_ARGS_WIN) -w
+endif
 	@mv ./jocoa.exe "$(WIN_DEST)/jocoa.exe"
 
 linux:
+ifeq ($(SHOW_CXX_WARNINGS),true)
 	@$(CXX) $(COMP_ARGS_LINUX)
+else
+	@$(CXX) $(COMP_ARGS_LINUX) -w
+endif
 	@sudo mv jocoa $(LINUX_DEST)
 
 win-test:
