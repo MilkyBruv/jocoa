@@ -3,7 +3,7 @@
 
 <br/>
 
-<img alt="Static Badge" src="https://img.shields.io/badge/version-0.2.1-blue">
+<img alt="Static Badge" src="https://img.shields.io/badge/version-0.2.2-blue">
 <img alt="Static Badge" src="https://img.shields.io/badge/license-MIT-green">
 <img alt="" src="https://img.shields.io/badge/Linux-FCC624?logo=linux&logoColor=black">
 <img alt="" src="https://custom-icon-badges.demolab.com/badge/Windows-0078D6?logo=windows11&logoColor=white">
