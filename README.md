@@ -109,6 +109,12 @@ Installation for both Linux and Windows is very similar, simply install G++ or C
 
 #### Prerequisites
 ```
+$ sudo apt-get install make
+```
+
+Then use either `g++` (default) or `clang++`.
+
+```
 $ sudo apt-get install g++
 ```
 Or
@@ -119,15 +125,8 @@ $ sudo apt-get install clang
 #### Cloning and compiling
 ```
 $ git clone https://github.com/MilkyBruv/jocoa
-cd jocoa
-```
-For G++
-```
-$ make glinux
-```
-Or for Clang++
-```
-$ make clinux
+$ cd jocoa
+$ make
 ```
 
 ### Windows
@@ -138,14 +137,6 @@ Install G++ and/or Clang++ with [MinGW MSYS2](https://www.msys2.org/)
 
 #### Cloning and Compiling
 ```
-C:/> git clone https://github.com/MilkyBruv/jocoa
-&& cd jocoa
-```
-For G++
-```
-C:/jocoa/> make gwin
-```
-Or for Clang++
-```
-C:/jocoa/> make cwin
-```
+> git clone https://github.com/MilkyBruv/jocoa
+> cd jocoa
+> make
