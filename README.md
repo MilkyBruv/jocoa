@@ -112,6 +112,12 @@ Install G++ and/or Clang++ with [MinGW MSYS2](https://www.msys2.org/)
 
 #### Linux
 ```
+$ sudo apt-get install make
+```
+
+Then use either `g++` (default) or `clang++`.
+
+```
 $ sudo apt-get install g++
 ```
 Or
@@ -128,6 +134,11 @@ Clone the repository to wherever you want, `C:/jocoa` and `/home` recommended
 ```
 ```
 $ git clone https://github.com/MilkyBruv/jocoa
+<<<<<<< HEAD
+=======
+$ cd jocoa
+$ make
+>>>>>>> 09a5fcc37d771cda38cf5e45ddac228f92213b35
 ```
 
 Note that you can clone jocoa to wherever you want, as the build files will be sent to the default path unless specified otherwise (`C:/jocoa` for windows and `/usr/local/bin` for linux).
@@ -138,6 +149,7 @@ Set the `CXX` and `WIN_DEST` or leave them as the default (`CXX=g++`, `WIN_DEST=
 
 **For default build at** `C:/jocoa`
 ```
+<<<<<<< HEAD
 C:/jocoa> make
 ```
 
@@ -169,3 +181,8 @@ $ make LINUX_DEST="/your/path/jocoa"
 The Makefile has a few different arguments you can change to customize the build:
 - `CXX`: C++ Compiler, e.g. `g++` (default), `clang++`)
 - `SHOW_CXX_WARNINGS`: Can be turned on with `SHOW_CXX_WARNINGS=true` to show any warnings during compilation.
+=======
+> git clone https://github.com/MilkyBruv/jocoa
+> cd jocoa
+> make
+>>>>>>> 09a5fcc37d771cda38cf5e45ddac228f92213b35
