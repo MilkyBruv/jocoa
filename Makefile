@@ -1,14 +1,14 @@
-SOURCES := $(wildcard src/**/*.cpp)
-COMP_ARGS_WIN := $(SOURCES) -o jocoa.exe -std=c++17
-COMP_ARGS_LINUX := $(SOURCES) -o jocoa -std=c++17
+SOURCES := $(wildcard src/**/*.c)
+COMP_ARGS_WIN := $(SOURCES) -o jocoa.exe -std=c99
+COMP_ARGS_LINUX := $(SOURCES) -o jocoa -std=c99
 WIN_DEST := C:/jocoa
 LINUX_DEST := /usr/local/bin
-CXX := g++
-SHOW_CXX_WARNINGS := false
+CC := gcc
+SHOW_CC_WARNINGS := false
 
 all:
-	@echo CXX=$(CXX)
-	@echo SHOW_CXX_WARNINGS=$(SHOW_CXX_WARNINGS)
+	@echo CC=$(CC)
+	@echo SHOW_CC_WARNINGS=$(SHOW_CC_WARNINGS)
 
 ifeq ($(OS),Windows_NT)
 	@echo DEST=$(WIN_DEST)
@@ -25,23 +25,23 @@ initwin:
 
 win:
 	@make initwin
-ifeq ($(SHOW_CXX_WARNINGS),true)
-	@$(CXX) $(COMP_ARGS_WIN)
+ifeq ($(SHOW_CC_WARNINGS),true)
+	@$(CC) $(COMP_ARGS_WIN)
 else
-	@$(CXX) $(COMP_ARGS_WIN) -w
+	@$(CC) $(COMP_ARGS_WIN) -w
 endif
 	@mv ./jocoa.exe "$(WIN_DEST)/jocoa.exe"
 
 linux:
-ifeq ($(SHOW_CXX_WARNINGS),true)
-	@$(CXX) $(COMP_ARGS_LINUX)
+ifeq ($(SHOW_CC_WARNINGS),true)
+	@$(CC) $(COMP_ARGS_LINUX)
 else
-	@$(CXX) $(COMP_ARGS_LINUX) -w
+	@$(CC) $(COMP_ARGS_LINUX) -w
 endif
 	@sudo mv jocoa $(LINUX_DEST)
 
 win-test:
-	$(CXX) $(COMP_ARGS_WIN)
+	$(CC) $(COMP_ARGS_WIN)
 
 linux-test:
-	$(CXX) $(COMP_ARGS_LINUX)
+	$(CC) $(COMP_ARGS_LINUX)
