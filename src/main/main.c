@@ -34,16 +34,10 @@ int main(int argc, const char* argv[])
         return 0;
     }
 
-    char* out[3];
-    split_string("hello-world-!", "-", out, 3);
-    printf("%s\n", out[0]);
-
+    // run function mapped to command
     for (unsigned char i = 0; i < JOCOA_TOTAL_COMMANDS; i++)
     {
-        if (strcmp(argv[1], command_map[i].key) == 0)
-        {
-            command_map[i].pair(argc, argv);
-        }
+        if (strcmp(argv[1], command_map[i].key) == 0) { command_map[i].pair(argc, argv); }
     }
 
     return 0;

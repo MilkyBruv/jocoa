@@ -1,7 +1,8 @@
 SOURCES := $(wildcard src/**/*.c)
 COMP_ARGS_WIN := $(SOURCES) -o jocoa.exe -std=c99
 COMP_ARGS_LINUX := $(SOURCES) -o jocoa -std=c99
-WIN_DEST := C:/jocoa
+# WIN_DEST := C:/jocoa
+WIN_DEST := C:\User Program Files\jocoa
 LINUX_DEST := /usr/local/bin
 CC := gcc
 SHOW_CC_WARNINGS := false
