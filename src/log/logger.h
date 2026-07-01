@@ -6,9 +6,9 @@
 
 extern bool verbose;
 
-static void logger_set_verbose(bool state);
-static void logger_info(char* msg);
-static void logger_warn(char* msg);
-static void logger_error(char* msg);
+void logger_set_verbose(bool state);
+void logger_info(char* msg);
+void logger_warn(char* msg);
+void logger_error(char* msg);
 
 #endif

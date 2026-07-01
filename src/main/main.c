@@ -9,17 +9,22 @@ typedef struct hash_element
     void (*pair)(JOCOA_COMMAND_ARGS);
 } hash_element_t;
 
-#define JOCOA_TOTAL_COMMANDS 8
+#define JOCOA_TOTAL_COMMANDS 12
 
 const hash_element_t command_map[JOCOA_TOTAL_COMMANDS] = {
-    {.key = "init",     .pair = &init},
-    {.key = "help",     .pair = &help},
-    {.key = "info",     .pair = &info},
-    {.key = "new",      .pair = &_new},
-    {.key = "search",   .pair = &search},
-    {.key = "run",      .pair = &run},
-    {.key = "clean",    .pair = &clean},
-    {.key = "build",    .pair = &build}
+    {.key = "init",         .pair = &init},
+    {.key = "new",          .pair = &_new},
+    {.key = "search",       .pair = &search},
+    {.key = "run",          .pair = &run},
+    {.key = "clean",        .pair = &clean},
+    {.key = "build",        .pair = &build},
+    
+    {.key = "--version",    .pair = &version},
+    {.key = "--v",          .pair = &version},
+    {.key = "--help",       .pair = &help},
+    {.key = "--h",          .pair = &help},
+    {.key = "--info",       .pair = &info},
+    {.key = "--i",          .pair = &info},
 };
 
 int main(int argc, const char* argv[])
@@ -31,6 +36,7 @@ int main(int argc, const char* argv[])
     if (argc < 2)
     {
         // help command
+        help(argc, argv);
         return 0;
     }
 

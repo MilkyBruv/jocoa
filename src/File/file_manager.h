@@ -2,17 +2,19 @@
 #define FILE_MANAGER_H
 
 #include <stdbool.h>
-#include "macros.h"
-#include "logger.h"
-#include "str_utils.h"
+#include "./../macros/macros.h"
+#include "./../log/logger.h"
+#include "./../utils/str_utils.h"
 
-void createDirectory(char* path);
+/// @brief Creates the specified directory split by `/` or `\`
+/// @param path The path to create
+void create_directory(char path[]);
 void clearDirectory(char* path);
-void remove(char* path);
+// void remove(char* path);
 void createFile(char* path);
 void writeFile(char* path, char* contents);
 bool exists(char* path);
-void standardisePath(char* path);
+char* standardise_path(char path[]);
 void localisePath(char* path);
 void simplifyPath(char* path);
 char* simplifyPathNew(char* path);

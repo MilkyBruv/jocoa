@@ -101,88 +101,51 @@ src
 
 [Click here](https://github.com/MilkyBruv/jocoa/tree/main/examples) for examples.
 
-## Installation Guide
-
-Installation for both Linux and Windows is very similar, simply install G++ or Clang++, clone the repository, then compile the project with the Makefile.
+## Windows Installation Guide
 
 ### Prerequisites
 
-#### Windows
-Install G++ and/or Clang++ with [MinGW MSYS2](https://www.msys2.org/)
+Install `gcc` and/or `clang` with [MSYS2](https://www.msys2.org/)
 
-#### Linux
+### Compiling
+
+```
+> git clone https://github.com/MilkyBruv/jocoa
+> cd jocoa
+> make
+```
+
+You can also specify the destination folder (default is `C:/jocoa`) and which compiler to use (default is `gcc`)
+
+```
+> make WIN_DEST="C:/my/folder/jocoa" CC=clang
+```
+
+## Linux Installation Guide
+
+### Prerequisites
+
+Install `make` then either `gcc` or `clang`
+
 ```
 $ sudo apt-get install make
 ```
 
-Then use either `g++` (default) or `clang++`.
-
 ```
-$ sudo apt-get install g++
-```
-Or
-```
+$ sudo apt-get install gcc
 $ sudo apt-get install clang
 ```
 
-### Cloning
+### Compiling
 
-Clone the repository to wherever you want, `C:/jocoa` and `/home` recommended
-
-```
-> git clone https://github.com/MilkyBruv/jocoa
-```
 ```
 $ git clone https://github.com/MilkyBruv/jocoa
-<<<<<<< HEAD
-=======
 $ cd jocoa
 $ make
->>>>>>> 09a5fcc37d771cda38cf5e45ddac228f92213b35
 ```
 
-Note that you can clone jocoa to wherever you want, as the build files will be sent to the default path unless specified otherwise (`C:/jocoa` for windows and `/usr/local/bin` for linux).
+You can also specify the destination folder (default is `/usr/local/bin`) and which compiler to use (default is `gcc`)
 
-### Compiling for Windows
-
-Set the `CXX` and `WIN_DEST` or leave them as the default (`CXX=g++`, `WIN_DEST=C:/jocoa`)
-
-**For default build at** `C:/jocoa`
 ```
-<<<<<<< HEAD
-C:/jocoa> make
+$ make LINUX_DEST="/my/folder" CC=clang
 ```
-
-**For custom build at** `C:/your/path/jocoa`
-```
-C:/your/path/jocoa> make WIN_DEST="C:/your/path/jocoa"
-```
-
-**NOTE THAT YOU MUST USE EITHER** `/` **OR** `\\` **FOR** `WIN_DEST` **ELSE YOU WILL HAVE ISSUES**
-
-Then add `C:/jocoa` or `C:/your/path/jocoa` to PATH.
-
-### Compiling for Linux
-
-Set the `LINUX_DEST` or leave it as the default (`/usr/local/bin`)
-
-**For default build at** `/usr/local/bin`
-```
-$ make
-```
-
-**For custom build at** `/your/path/jocoa`
-```
-$ make LINUX_DEST="/your/path/jocoa"
-```
-
-### Compiling Notes
-
-The Makefile has a few different arguments you can change to customize the build:
-- `CXX`: C++ Compiler, e.g. `g++` (default), `clang++`)
-- `SHOW_CXX_WARNINGS`: Can be turned on with `SHOW_CXX_WARNINGS=true` to show any warnings during compilation.
-=======
-> git clone https://github.com/MilkyBruv/jocoa
-> cd jocoa
-> make
->>>>>>> 09a5fcc37d771cda38cf5e45ddac228f92213b35
