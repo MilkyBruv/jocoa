@@ -10,8 +10,6 @@
 // #include "./../Json/JsonManager.hpp"
 // #include "./../Command/CommandBuilder.hpp"
 
-#define JOCOA_COMMAND_ARGS int argc, const char* argv[]
-
 void init(JOCOA_COMMAND_ARGS);
 void help(JOCOA_COMMAND_ARGS);
 void info(JOCOA_COMMAND_ARGS);

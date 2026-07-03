@@ -7,8 +7,6 @@ void init(JOCOA_COMMAND_ARGS)
 
 void help(JOCOA_COMMAND_ARGS)
 {
-
-
     printf( 
     "\033[39m"
     "\033[39m       ++ \033[31m #######  \033[39m +++++++   +++++++     +++   \n"
@@ -45,8 +43,13 @@ void info(JOCOA_COMMAND_ARGS)
 
 void _new(JOCOA_COMMAND_ARGS)
 {
-    char dir[] = "./yo/cuh";
-    create_directory(dir);
+    for (size_t i = 0; i < argc; i++)
+    {
+        printf("%s,\n", argv[i]);
+    }
+    
+
+    // create_directory(dir);
     printf("done?\n");
 }
 

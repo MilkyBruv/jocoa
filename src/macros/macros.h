@@ -20,5 +20,9 @@
 #define JOCOA_VERSION "v0.3.0"
 #define JOCOA_MAX_PATH 32
 #define JOCOA_MAX_SPLIT 32
+#define JOCOA_COMMAND_ARGS int argc, const char* argv[]
+#define JOCOA_TOTAL_COMMANDS 10
+#define JOCOA_TOTAL_COMMAND_ALIASES 5
+#define JOCOA_COMMAND_SIZE 16
 
 #endif

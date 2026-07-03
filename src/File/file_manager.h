@@ -9,7 +9,9 @@
 /// @brief Creates the specified directory split by `/` or `\`
 /// @param path The path to create
 void create_directory(char path[]);
-void clearDirectory(char* path);
+/// @brief Clears the specified directory of all files and folders
+/// @param path The path to clear
+void clear_directory(char path[]);
 // void remove(char* path);
 void createFile(char* path);
 void writeFile(char* path, char* contents);

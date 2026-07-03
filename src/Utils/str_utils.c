@@ -10,7 +10,6 @@ void str_split(char str[], const char* delimiter, char* output[], const size_t o
     while (token != NULL && i < occurences) // add 1 cuz need to split around delimiter
     {
         output[i++] = token;
-        printf("splitted: %s\n", token);
         token = strtok(NULL, delimiter);
     }
 
@@ -41,20 +40,13 @@ char* str_replace(char str[], const char* find, const char* replace, const size_
     if (splits[0] == NULL || count == 0) { return str; }
 
     char* new_str = splits[0];
-    printf("first: %s\n", new_str);
-    printf("0: %s\n", splits[0]);
-    printf("1: %s\n", splits[1]);
-    printf("2: %s\n", splits[2]);
 
     // Start from one cuz using splits[0] as first bit of string yk
     for (size_t i = 1; i < count; i++)
     {
         strcat(new_str, replace);
         strcat(new_str, splits[i]);
-        printf("AND THIS %s\n", new_str);
     }
-
-    printf("returns %s\n", new_str);
 
     return new_str;
 }

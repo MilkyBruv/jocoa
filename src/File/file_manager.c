@@ -3,16 +3,13 @@
 void create_directory(char path[])
 {
     char* folders[JOCOA_MAX_PATH];
-    printf("folders\n");
 
     // Standardise path for current os
     char* new_path = standardise_path(path);
-    printf("standardise path\n");
 
     // Split folders
     size_t count;
     str_split(new_path, JOCOA_OS_SEP_STR, folders, JOCOA_MAX_PATH, &count);
-    printf("split folders\n");
 
     int success;
     char log_str[256];
@@ -24,13 +21,11 @@ void create_directory(char path[])
         success = 0;
 
         // Skip "../" and "./"
-        if (strcmp(folders[i], "..") == 0 || strcmp(folders[i], ".") == 0) { printf("skipped %s\n", folders[i]); continue; }
+        if (strcmp(folders[i], "..") == 0 || strcmp(folders[i], ".") == 0) { continue; }
 
         // Append next folder to current_path
         strcat(current_path, JOCOA_OS_SEP_STR);
         strcat(current_path, folders[i]);
-
-        printf("gonna make %s\n", current_path);
 
         // Create current_path
         #if defined(_WIN32) || defined(_WIN64)
@@ -39,8 +34,6 @@ void create_directory(char path[])
             // returns 0 for pass, -1 for fail, so + 1 is 0 (false) and 1 (true)
             success = (bool) (mkdir(current_path, 0777) + 1);
         #endif
-
-        printf("post check with %i\n", success);
 
         if (success > 0)
         {
@@ -57,9 +50,13 @@ void create_directory(char path[])
     }
 }
 
+void clear_directory(char path[])
+{
+    
+}
+
 char* standardise_path(char path[])
 {
-    printf("yuh\n");
     #if defined(_WIN32) || defined(_WIN64)
         return str_replace_char(path, '/', JOCOA_OS_SEP, JOCOA_MAX_PATH);
     #elif defined(__linux__) || defined(_APPLE__) || defined(__unix__)

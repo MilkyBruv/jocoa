@@ -5,26 +5,21 @@
 
 typedef struct hash_element
 {
-    const char* key;
+    const char key[JOCOA_TOTAL_COMMAND_ALIASES][JOCOA_COMMAND_SIZE];
     void (*pair)(JOCOA_COMMAND_ARGS);
 } hash_element_t;
 
-#define JOCOA_TOTAL_COMMANDS 12
-
 const hash_element_t command_map[JOCOA_TOTAL_COMMANDS] = {
-    {.key = "init",         .pair = &init},
-    {.key = "new",          .pair = &_new},
-    {.key = "search",       .pair = &search},
-    {.key = "run",          .pair = &run},
-    {.key = "clean",        .pair = &clean},
-    {.key = "build",        .pair = &build},
+    {.key = {"init"}, .pair = &init},
+    {.key = {"new"}, .pair = &_new},
+    {.key = {"search"}, .pair = &search},
+    {.key = {"run"}, .pair = &run},
+    {.key = {"clean"}, .pair = &clean},
+    {.key = {"build"}, .pair = &build},
     
-    {.key = "--version",    .pair = &version},
-    {.key = "--v",          .pair = &version},
-    {.key = "--help",       .pair = &help},
-    {.key = "--h",          .pair = &help},
-    {.key = "--info",       .pair = &info},
-    {.key = "--i",          .pair = &info},
+    {.key = {"--version", "-version", "--v", "-v"}, .pair = &version},
+    {.key = {"--help", "-help", "--h", "-h"}, .pair = &help},
+    {.key = {"--info", "-info", "--i", "-i"}, .pair = &info},
 };
 
 int main(int argc, const char* argv[])
@@ -43,7 +38,11 @@ int main(int argc, const char* argv[])
     // run function mapped to command
     for (unsigned char i = 0; i < JOCOA_TOTAL_COMMANDS; i++)
     {
-        if (strcmp(argv[1], command_map[i].key) == 0) { command_map[i].pair(argc, argv); }
+        for (unsigned char j = 0; j < JOCOA_TOTAL_COMMAND_ALIASES; j++)
+        {
+            if (strcmp(argv[1], command_map[i].key[j]) == 0) { command_map[i].pair(argc, argv); }
+        }
+        
     }
 
     return 0;
